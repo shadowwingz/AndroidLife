@@ -201,10 +201,10 @@ private void handleTimeout(ToastRecord record)
 }
 
 void cancelToastLocked(int index) {
-	// 取出 ToastRecord
+    // 取出 ToastRecord
     ToastRecord record = mToastQueue.get(index);
     try {
-		// 调用 callback 的 hide 方法隐藏 Toast
+        // 调用 callback 的 hide 方法隐藏 Toast
         record.callback.hide();
     } catch (RemoteException e) {
         Slog.w(TAG, "Object died trying to hide notification " + record.callback
@@ -213,7 +213,7 @@ void cancelToastLocked(int index) {
         // the list anyway
     }
 
-	// 从 mToastQueue 中移除 ToastRecord
+    // 从 mToastQueue 中移除 ToastRecord
     ToastRecord lastToast = mToastQueue.remove(index);
     mWindowManagerInternal.removeWindowToken(lastToast.token, true);
 
@@ -222,7 +222,7 @@ void cancelToastLocked(int index) {
         // Show the next one. If the callback fails, this will remove
         // it from the list, so don't assume that the list hasn't changed
         // after this point.
-		// 如果 mToastQueue 不为空，说明还有 Toast 需要显示，就继续显示下一个 Toast
+        // 如果 mToastQueue 不为空，说明还有 Toast 需要显示，就继续显示下一个 Toast
         showNextToastLocked();
     }
 }
