@@ -45,7 +45,7 @@ public class AlertDialog extends Dialog implements DialogInterface {
     }
 
     // Builder 是 AlertDialog 的内部类
-	public static class Builder {
+    public static class Builder {
 		// 存储 AlertDialog 的各个参数，比如 title、message、icon 等
         private final AlertController.AlertParams P;
         private int mTheme;
@@ -92,7 +92,7 @@ public class AlertDialog extends Dialog implements DialogInterface {
             }
             return dialog;
         }
-	}
+    }
 }
 ```
 
