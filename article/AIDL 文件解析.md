@@ -1,15 +1,15 @@
-```
+```java
 public interface IBookManager extends android.os.IInterface {
     /**
      * Local-side IPC implementation stub class.
      */
-	// 声明了一个内部类 Stub，这个 Stub 就是一个 Binder 类
-	// 这个类，继承了 Binder，实现了 IBookManager
-	// 调用 asInterface 时，它可以调用 IBookManager 的跨进程方法
-	// 调用 asBinder 时，它可以关联 Binder 的死亡代理
+    // 声明了一个内部类 Stub，这个 Stub 就是一个 Binder 类
+    // 这个类，继承了 Binder，实现了 IBookManager
+    // 调用 asInterface 时，它可以调用 IBookManager 的跨进程方法
+    // 调用 asBinder 时，它可以关联 Binder 的死亡代理
     public static abstract class Stub extends android.os.Binder implements com.example
             .chapter2first.aidl.IBookManager {
-		// Binder 的唯一标识，一般用当前 Binder 的类名表示
+        // Binder 的唯一标识，一般用当前 Binder 的类名表示
         private static final java.lang.String DESCRIPTOR = "com.example.chapter2first.aidl" +
                 ".IBookManager";
 
@@ -24,9 +24,9 @@ public interface IBookManager extends android.os.IInterface {
          * Cast an IBinder object into an com.example.chapter2first.aidl.IBookManager interface,
          * generating a proxy if needed.
          */
-		// 用于将服务端的 Binder 对象转换成客户端所需的 AIDL 接口类型的对象，这种
-		// 转换过程是区分进程的，如果客户端和服务端位于同一进程，那么此方法返回的就是
-		// 服务端的 Stub 对象本身，否则返回的是系统封装后的 Stub.proxy 对象
+        // 用于将服务端的 Binder 对象转换成客户端所需的 AIDL 接口类型的对象，这种
+        // 转换过程是区分进程的，如果客户端和服务端位于同一进程，那么此方法返回的就是
+        // 服务端的 Stub 对象本身，否则返回的是系统封装后的 Stub.proxy 对象
         public static com.example.chapter2first.aidl.IBookManager asInterface(android.os.IBinder
                                                                                       obj) {
             if ((obj == null)) {
@@ -34,10 +34,10 @@ public interface IBookManager extends android.os.IInterface {
             }
             android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);
             if (((iin != null) && (iin instanceof com.example.chapter2first.aidl.IBookManager))) {
-				// 不跨进程
+                // 不跨进程
                 return ((com.example.chapter2first.aidl.IBookManager) iin);
             }
-			// 跨进程
+            // 跨进程
             return new com.example.chapter2first.aidl.IBookManager.Stub.Proxy(obj);
         }
 
