@@ -96,12 +96,12 @@ public class AlertDialog extends Dialog implements DialogInterface {
 }
 ```
 
-外部类：AlertDialog 内部类：Builder
+外部类：AlertDialog 内部类：Builder<br/>
 外部类：AlertController 内部类：AlertParams
 
 title、message、icon 等首先赋值给 Builder，
 Builder 又把参数赋值给 AlertParams，然后调用 `create` 方法，
-会把 AlertParams 中的参数依次赋值给 AlertController，
+会把 AlertParams 中的参数依次赋值给 AlertController。
 
 ### 注： ###
 
