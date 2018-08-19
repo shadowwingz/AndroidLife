@@ -1,3 +1,5 @@
+<img src="https://github.com/shadowwingz/AndroidLife/blob/master/art/ThreadLocal%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.jpg">
+
 ThreadLocal 是一个泛型类，它的定义为 `public class ThreadLocal<T>`，只要弄清楚 ThreadLocal 的 get 和 set 方法就可以明白它的工作原理。
 
 ### set 方法 ###
