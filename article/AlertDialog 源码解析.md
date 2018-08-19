@@ -1,4 +1,7 @@
-<img src="https://github.com/shadowwingz/AndroidLife/blob/master/art/AlertDialog%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.jpg"/>
+<p align="center">
+  <img src="https://github.com/shadowwingz/AndroidLife/blob/master/art/AlertDialog%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.jpg"/>
+</p>
+
 
 AlertDialog 源码使用的是 Builder 模式，通过 Builder 对象来组装 Dialog 的各个部分，比如 title、buttons、message 等，将 Dialog 的构造和表示进行分离。
 
