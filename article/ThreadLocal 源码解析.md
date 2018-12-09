@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/shadowwingz/AndroidLife/blob/master/art/ThreadLocal%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.jpg">
+  <img src="https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/art/ThreadLocal%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.jpg">
 </p>
 
 
