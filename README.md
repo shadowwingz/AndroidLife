@@ -17,4 +17,6 @@ AndroidLife
     - [MeasureSpec 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/MeasureSpec%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
     - View 的工作流程
         - [View 的测量原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/View%20%E7%9A%84%E6%B5%8B%E9%87%8F%E5%8E%9F%E7%90%86.md)
+    - ViewGroup 的工作流程
+        - ViewGroup 的测量原理
 
