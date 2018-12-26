@@ -53,4 +53,5 @@ protected void measureChild(View child, int parentWidthMeasureSpec,
 子元素测量好了，接下来就该测量父容器自己了。但是我们在 ViewGroup 源码中可以发现，ViewGroup 并没有重写 `onMeasure` 方法。这是为什么呢？因为根本就没法重写，没办法，不同的 ViewGroup 子类有自己独特的布局特性，回忆一下我们使用的 LinearLayout 和 RelativeLayout，它们使用起来差异就很大，所以测量细节肯定是不同的。具体测量细节请看
 
 LinearLayout 的测量原理
+
 RelativeLayout 的测量原理
