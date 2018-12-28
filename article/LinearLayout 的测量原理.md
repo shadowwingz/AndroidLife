@@ -135,8 +135,56 @@ for (int i = 0; i < count; ++i) {
 ```java
 LinearLayout # measureVertical
 
+mTotalLength += mPaddingTop + mPaddingBottom;
+int heightSize = mTotalLength;
+heightSize = Math.max(heightSize, getSuggestedMinimumHeight());
+int heightSizeAndState = resolveSizeAndState(heightSize, heightMeasureSpec, 0);
+
 setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
                 heightSizeAndState);
 ```
 
-我们可以看到，
+我们可以看到，`mTotalLength` 赋值给了 `heightSize`，然后，`heightSize` 和 `maxWidth` 都被传入了 resolveSizeAndState 方法，`resolveSizeAndState` 方法的返回值被作为了最终宽高传入了 `setMeasuredDimension` 方法。我们看下 `resolveSizeAndState` 方法：
+
+```java
+LinearLayout # resolveSizeAndState
+
+// size 是 LinearLayout 测量之后得到的大小，也是 LinearLayout 想要的大小
+// measureSpec 是 LinearLayout 自己的 LayoutParams 和父容器的 MeasureSpec 共同作用生成的 MeasureSpec
+public static int resolveSizeAndState(int size, int measureSpec, int childMeasuredState) {
+    int result = size;
+    // LinearLayout 的测量模式
+    int specMode = MeasureSpec.getMode(measureSpec);
+    // LinearLayout 的测量大小，也是 LinearLayout 父容器的剩余空间
+    int specSize =  MeasureSpec.getSize(measureSpec);
+    switch (specMode) {
+    case MeasureSpec.UNSPECIFIED:
+        result = size;
+        break;
+    // 如果 LinearLayout 的测量模式是 AT_MOST，即布局使用的是 wrap_content
+    case MeasureSpec.AT_MOST:
+        // 如果 LinearLayout 想要的大小比父容器的剩余空间大
+        if (specSize < size) {
+            // 那么 LinearLayout 的大小就是父容器的剩余空间
+            result = specSize | MEASURED_STATE_TOO_SMALL;
+        } else {
+            // 否则 LinearLayout 的大小就是它想要的大小
+            result = size;
+        }
+        break;
+    // 如果 LinearLayout 的测量模式是 EXACTLY，
+    // 即布局使用的是 match_parent 或者具体数值    
+    case MeasureSpec.EXACTLY:
+        // LinearLayout 的大小就是它想要的大小
+        result = specSize;
+        break;
+    }
+    return result | (childMeasuredState&MEASURED_STATE_MASK);
+}
+```
+
+总结一下，
+
+如果 LinearLayout 的测量模式是 EXACTLY，那 LinearLayout 想要多大就给它多大，
+
+如果 LinearLayout 的测量模式是 AT_MOST，那此时要看父容器的大小，要是 LinearLayout 想要的大小比父容器的剩余空间小，那就要多大给多大，要是 LinearLayout 想要的大小比父容器的剩余空间还大，那父容器也无能为力，只能把剩余空间全部给 LinearLayout，再要多的也没有。
