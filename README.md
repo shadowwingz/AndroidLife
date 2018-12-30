@@ -21,4 +21,5 @@ AndroidLife
         - [ViewGroup 的测量原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/ViewGroup%20%E7%9A%84%E6%B5%8B%E9%87%8F%E5%8E%9F%E7%90%86.md)
         - [LinearLayout 的测量原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/LinearLayout%20%E7%9A%84%E6%B5%8B%E9%87%8F%E5%8E%9F%E7%90%86.md)
         - RelativeLayout 的测量原理
+    - RemoteViews 源码解析
 
