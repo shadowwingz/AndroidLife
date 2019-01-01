@@ -5,7 +5,7 @@
 比如，我们在 xml 布局文件中设置了两个 TextView。在 text2 的属性中，我们看到有一个 `layout_toRightOf` 属性。我们在 xml 文件中设置的属性，在 RelativeLayout 的 Java 代码中也有对应的 int 类型常量字段：
 
 
-```
+```java
 public class RelativeLayout extends ViewGroup {
     public static final int LEFT_OF                  = 0;
     public static final int RIGHT_OF                 = 1;
@@ -303,7 +303,7 @@ RelativeLayout 的 width 和 height：
 
 通过前面的分析，我们知道了 RelativeLayout 测量子元素的流程。那么 RelativeLayout 自己的宽高是怎么确定下来的呢？
 
-```
+```java
 
 @Override
 protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
