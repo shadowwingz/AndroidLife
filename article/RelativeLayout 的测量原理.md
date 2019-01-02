@@ -2,22 +2,6 @@
 
 那么，什么是 rule？
 
-比如，我们在 xml 布局文件中设置了两个 TextView。在 text2 的属性中，我们看到有一个 `layout_toRightOf` 属性。我们在 xml 文件中设置的属性，在 RelativeLayout 的 Java 代码中也有对应的 int 类型常量字段：
-
-
-```java
-public class RelativeLayout extends ViewGroup {
-    public static final int LEFT_OF                  = 0;
-    public static final int RIGHT_OF                 = 1;
-    ......
-}
-```
-
-它们就叫做子元素（这里是 TextView）的 rule。
-
-子元素的 rule 都保存在它对应的 LayoutParams 中的 mRule 中。
-
-
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -42,9 +26,31 @@ public class RelativeLayout extends ViewGroup {
 </RelativeLayout>
 ```
 
-以上面的布局文件为例，分析一下 getRelatedViewParams 方法：
+先看下上面这个简单的布局文件，我们在 xml 布局文件中设置了两个 TextView。在 text2 的属性中，我们看到有一个 `layout_toRightOf` 属性。我们在 xml 文件中设置的属性，在 RelativeLayout 的 Java 代码中也有对应的 int 类型常量字段：
 
-这里我们分析的子元素是 text2，关联 View 是 text1。
+```java
+RelativeLayout
+
+public class RelativeLayout extends ViewGroup {
+    public static final int LEFT_OF                  = 0;
+    public static final int RIGHT_OF                 = 1;
+    ......
+}
+```
+
+它们就叫做子元素（这里是 TextView）的 rule。
+
+子元素的 rule 都保存在它对应的 LayoutParams 中的 mRule 中。
+
+在 RelativeLayout 的测量过程中，和 rule 关系密切的是 `getRelatedViewParams` 方法。`getRelatedViewParams` 方法会返回和子元素有布局关联的 View（related view） 的 LayoutParams，那么，什么是 `related view`？
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/art/related_view.jpg"/>
+</p>
+
+上面这张图中，text2 依赖于 text1，text2、text1 就构成了一条 relation 为 RIGHT_OF 的约束链。在这里，`related view` 就是 text1。
+
+下面分析一下 `getRelatedViewParams` 方法，这里我们分析的子元素是 text2，关联 View（`related view`） 是 text1。
 
 ```java
 RelativeLayout # getRelatedViewParams
@@ -69,7 +75,7 @@ private LayoutParams getRelatedViewParams(int[] rules, int relation) {
 // 找出和子元素有布局关联的那个 View text1
 private View getRelatedView(int[] rules, int relation) {
     // 因为子元素 text2 设置了 android:layout_toRightOf="@id/text1"（此时 relation 是 RIGHT_OF），
-    // 那么 rules[relation] 会返回 text1 对应的 View 的 id。
+    // 那么 rules[relation] 会返回 text1 对应的 View 的 id。否则会返回 0。
     int id = rules[relation];
     if (id != 0) {
         // 通过 id 获取到 Node
@@ -96,7 +102,9 @@ private View getRelatedView(int[] rules, int relation) {
 }
 ```
 
-再分析下 applyHorizontalSizeRules 方法：
+总结一下，`getRelatedViewParams` 方法会返回和子元素有布局关联的 View（`related view`） 的 LayoutParams。
+
+在 RelativeLayout 的 `onMeasure` 方法中，RelativeLayout 会遍历它的子元素，然后调用 `applyHorizontalSizeRules` 方法。我们看下 `applyHorizontalSizeRules` 方法：
 
 ```java
 RelativeLayout # applyHorizontalSizeRules
@@ -115,9 +123,11 @@ private void applyHorizontalSizeRules(LayoutParams childParams, int myWidth, int
     childParams.mLeft = VALUE_NOT_SET;
     childParams.mRight = VALUE_NOT_SET;
 
-    // 确定 text2 的 mRight，也就是 text2 的右边缘的 x 坐标
+    // 因为在布局中我们没有给 text2 设置 android:layout_toLeftOf
+    // 所以 getRelatedViewParams 会返回 null
     anchorParams = getRelatedViewParams(rules, LEFT_OF);
     if (anchorParams != null) {
+        // 确定 text2 的 mRight，也就是 text2 的右边缘的 x 坐标
         childParams.mRight = anchorParams.mLeft - (anchorParams.leftMargin +
                 childParams.rightMargin);
     } else if (childParams.alignWithParent && rules[LEFT_OF] != 0) {
@@ -175,9 +185,11 @@ private void applyHorizontalSizeRules(LayoutParams childParams, int myWidth, int
 }
 ```
 
-总结一下，applyHorizontalSizeRules 方法会依次判断子元素和别的元素有没有 `LEFT_OF`、`RIGHT_OF`、`ALIGN_LEFT`、`ALIGN_RIGHT`、`ALIGN_PARENT_LEFT`、`ALIGN_PARENT_RIGHT` 这些关联，然后不停确定子元素的 mLeft 和 mRight，mLeft 和 mRight 一旦确定出来，子元素的宽就确定出来了。
+总结一下，`applyHorizontalSizeRules` 方法会依次判断子元素和别的元素有没有 `LEFT_OF`、`RIGHT_OF`、`ALIGN_LEFT`、`ALIGN_RIGHT`、`ALIGN_PARENT_LEFT`、`ALIGN_PARENT_RIGHT` 这些关联，然后不停确定子元素的 `mLeft` 和 `mRight`，`mLeft` 和 `mRight` 一旦确定出来，子元素的宽就确定出来了。
 
-宽度确定出来之后，会创建子元素的 MeasureSpec，然后调用子元素的 measure，这样测量过程就传递到子元素了。
+到这里，RelativeLayout 的子元素的宽都确定出来了。
+
+宽度确定出来之后，会创建子元素的 MeasureSpec，然后调用子元素的 `measure` 方法，这样测量过程就传递到子元素了。
 
 ```java
 RelativeLayout # measureChildHorizontal
@@ -276,9 +288,11 @@ private void applyVerticalSizeRules(LayoutParams childParams, int myHeight) {
 }
 ```
 
-可以看到，applyVerticalSizeRules 方法的逻辑和 applyHorizontalSizeRules 方法的逻辑非常相似，applyVerticalSizeRules 方法会依次判断子元素和别的元素有没有 `ABOVE`、`BELOW`、`ALIGN_TOP`、`ALIGN_BOTTOM`、`ALIGN_PARENT_TOP`、`ALIGN_PARENT_BOTTOM` 这些关联，然后不停确定子元素的 mTop 和 mBottom，mTop 和 mBottom 一旦确定出来，子元素的高就确定出来了。
+可以看到，`applyVerticalSizeRules` 方法的逻辑和 `applyHorizontalSizeRules` 方法的逻辑非常相似，`applyVerticalSizeRules` 方法会依次判断子元素和别的元素有没有 `ABOVE`、`BELOW`、`ALIGN_TOP`、`ALIGN_BOTTOM`、`ALIGN_PARENT_TOP`、`ALIGN_PARENT_BOTTOM` 这些关联，然后不停确定子元素的 `mTop` 和 `mBottom`，`mTop` 和 `mBottom` 一旦确定出来，子元素的高就确定出来了。
 
-高确定出来之后，会调用 measureChild 方法，这样测量过程就传递到子元素了。
+因为 RelativeLayout 会遍历它的子元素，调用 `applyVerticalSizeRules` 方法，所以到这里，RelativeLayout 的子元素的高都确定出来了。
+
+高确定出来之后，会调用 `measureChild` 方法，这样测量过程就传递到子元素了。
 
 ```java
 RelativeLayout # measureChild
@@ -299,9 +313,7 @@ private void measureChild(View child, LayoutParams params, int myWidth, int myHe
 }
 ```
 
-RelativeLayout 的 width 和 height：
-
-通过前面的分析，我们知道了 RelativeLayout 测量子元素的流程。那么 RelativeLayout 自己的宽高是怎么确定下来的呢？
+通过前面的分析，我们知道了 RelativeLayout 测量子元素的流程。那么 RelativeLayout 自己的宽高是怎么确定下来的呢？我们看下 `onMeasure` 方法：
 
 ```java
 
@@ -330,15 +342,17 @@ protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         myHeight = heightSize;
     }
 
+    // widthMode == MeasureSpec.EXACTLY 有两种情况，
+    // 第一种情况，RelativeLayout 的宽度是固定尺寸，比如 100dp，这种情况下，myWidth 是 100 dp，
+    // 第二种情况，RelativeLayout 的宽度是 match_parent。这种情况下，myWidth 是父容器的宽度的剩余大小。
     if (widthMode == MeasureSpec.EXACTLY) {
         width = myWidth;
     }
 
+    // 同上
     if (heightMode == MeasureSpec.EXACTLY) {
         height = myHeight;
     }
-
-    // 到这里，RelativeLayout 的宽度和高度都是父容器的剩余大小
 
     // 如果 RelativeLayout 的宽度不是 EXACTLY，那么 isWrapContentWidth 为 true
     final boolean isWrapContentWidth = widthMode != MeasureSpec.EXACTLY;
@@ -389,5 +403,10 @@ protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     // 最终，width 和 height 都确定了之后，就调用 setMeasuredDimension 方法，确定 RelativeLayout 的宽高。
     setMeasuredDimension(width, height);
 }
-
 ```
+
+总结一下：
+
+- 如果 RelativeLayout 设置了固定尺寸，比如 100dp，就是它的最终大小就是这个尺寸。
+- 如果 RelativeLayout 的宽高是 `match_parent`，也就是测量模式是 EXACTLY，那么它的最终大小是父容器的剩余大小。
+- 如果 RelativeLayout 的宽高是 `wrap_content`，也就是测量模式是 AT_MOST，那么它的最终宽度是最下边的子元素的 `mBottom` + `bottomMargin` 值，最终高度是最右边的子元素的 `mRight` + `rightMargin` 值。
