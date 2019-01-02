@@ -1,4 +1,4 @@
-在分析 RelativeLayout 的测量原理之前，我们先普及一些概念，因为 Relativelayout 的测量并不像 LinearLayout 那样直来直去，Relativelayout 的测量过程中涉及到了 rule（约束）。
+在分析 RelativeLayout 的测量原理之前，我们先了解一些概念，因为 Relativelayout 的测量并不像 LinearLayout 那样直来直去，Relativelayout 的测量过程中涉及到了 rule（约束）。
 
 那么，什么是 rule？
 
