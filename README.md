@@ -18,6 +18,7 @@ AndroidLife
     - View 的工作流程
         - [View 的 measure 原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/View%20%E7%9A%84%E6%B5%8B%E9%87%8F%E5%8E%9F%E7%90%86.md)
         - [View 的 layout 原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/View%20%E7%9A%84%20layout%20%E5%8E%9F%E7%90%86.md)
+        - [View 的 draw 原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/View%20%E7%9A%84%20draw%20%E5%8E%9F%E7%90%86.md)
     - ViewGroup 的工作流程
         - [ViewGroup 的 measure 原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/ViewGroup%20%E7%9A%84%E6%B5%8B%E9%87%8F%E5%8E%9F%E7%90%86.md)
         - [LinearLayout 的 measure 原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/LinearLayout%20%E7%9A%84%E6%B5%8B%E9%87%8F%E5%8E%9F%E7%90%86.md)
