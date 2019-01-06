@@ -28,7 +28,7 @@ protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
 在 LinearLayout 中，有一个 `childTop` 变量，每个子元素的 `layout` 都依赖于变量来确定自己的位置，后面的子元素会被放置在靠下的位置。
 
-在 RelativeLayout 中，并没有 `childTop` 变量，那子元素的位置怎么确定呢？不会，因为在 RelativeLayout 的 `measure` 过程中，子元素的四个顶点的位置就已经确定了。
+在 RelativeLayout 中，并没有 `childTop` 变量，那子元素的位置怎么确定呢？答案是在 RelativeLayout 的 `measure` 过程中，子元素的四个顶点的位置就已经确定了。
 
 ```java
 RelativeLayout  # applyHorizontalSizeRules
