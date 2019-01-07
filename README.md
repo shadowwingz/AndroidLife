@@ -26,5 +26,5 @@ AndroidLife
         - [RelativeLayout 的 measure 原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/RelativeLayout%20%E7%9A%84%20measure%20%E5%8E%9F%E7%90%86.md)
         - [RelativeLayout 的 layout 原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/RelativeLayout%20%E7%9A%84%20layout%20%E5%8E%9F%E7%90%86.md)
         - [LinearLayout 和 RelativeLayout 的 draw 原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/LinearLayout%20%E5%92%8C%20RelativeLayout%20%E7%9A%84%20draw%20%E5%8E%9F%E7%90%86.md)
-    - RemoteViews 源码解析
+    - [RemoteViews 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/RemoteViews%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
 
