@@ -103,7 +103,7 @@ private void addAction(Action a) {
 }
 ```
 
-可以看到，addAction 方法是比较简单的，就是创建了一个类型为 Action 的 ArrayList，然后把 ReflectionAction 加到了这个 ArrayList 中。
+可以看到，`addAction` 方法是比较简单的，就是创建了一个类型为 Action 的 ArrayList，然后把 ReflectionAction 加到了这个 ArrayList 中。
 
 继续看下 `performApply` 方法：
 
@@ -122,7 +122,7 @@ private void performApply(View v, ViewGroup parent, OnClickHandler handler) {
 }
 ```
 
-performApply 的逻辑很简单，就是遍历了一下 mActions，也就是刚刚说的那个类型为 Action 的 ArrayList，然后调用了 Action 的 apply 方法，嗯，看 apply 方法：
+`performApply` 的逻辑很简单，就是遍历了一下 `mActions`，也就是刚刚说的那个类型为 Action 的 ArrayList，然后调用了 Action 的 `apply` 方法，嗯，看 `apply` 方法：
 
 ```java
 RemoteViews # Action
@@ -135,9 +135,9 @@ private abstract static class Action implements Parcelable {
 
 我们发现两件事，
 - 第一，Action 实现了 Parcelable 接口，也就是说，Action 是可以跨进程传递的。
-- 第二，apply 方法是个抽象方法，而且 Action 并没有实现它。
+- 第二，`apply` 方法是个抽象方法，而且 Action 并没有实现它。
 
-刚刚我们好像遇见个 ReflectionAction？看看它的 apply 方法：
+刚刚我们好像遇见个 ReflectionAction？看看它的 `apply` 方法：
 
 ```java
 
