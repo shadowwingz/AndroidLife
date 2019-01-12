@@ -79,7 +79,7 @@ Book 是个实体类，里面有两个字段，一个 `mBookId`，一个 `mBookN
 
 最终的 Book.aidl：
 
-```aidl
+```java
 // IBook.aidl
 package com.shadowwingz.binderdemo.aidl;
 
@@ -103,7 +103,7 @@ parcelable Book;
 
 IBookManager.aidl 代码如下：
 
-```aidl
+```java
 // IBookManager.aidl
 package com.shadowwingz.binderdemo.aidl;
 
