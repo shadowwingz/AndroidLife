@@ -1,13 +1,8 @@
 Binder 的重要性就不用我多说了，Binder 的难度就更不用我多说了，所以即使《Android 开发艺术探索》里的 Binder 章节已经看了不少遍了，但是还是决定写篇文章，好好捋一捋 Binder。
 
-行了，废话不多说，我们先来建个 Demo，就叫 BinderDemo。新建个 aidl 文件夹，用于存放 Binder 相关的文件。我们先在 aidl 文件夹下新建个 Book.java，代码如下：
+行了，废话不多说，我们先来建个项目，然后新建个 binderdemo 文件夹，用于存放 Binder 相关的文件。我们先在 binderdemo 文件夹下新建个 Book.java，代码如下：
 
 ```java
-package com.shadowwingz.binderdemo.aidl;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /**
  * Created by shadowwingz on 2019-01-12 21:27
  * <p>
@@ -81,7 +76,7 @@ Book 是个实体类，里面有两个字段，一个 `mBookId`，一个 `mBookN
 
 ```java
 // IBook.aidl
-package com.shadowwingz.binderdemo.aidl;
+package com.shadowwingz.androidlifedemo.binderdemo;
 
 // 自定义的实体类需要在 aidl 文件中声明
 parcelable Book;
@@ -89,15 +84,9 @@ parcelable Book;
 
 在 Book.aidl 中，我们只做了一件事，就是声明 Book 实体类。
 
-在创建出 Book.aidl 文件后，我们惊奇的发现，现在居然有两个 aidl 文件夹。
+说到这里，我们要解释一下 aidl 文件是什么，以及为什么要创建 aidl 文件？
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/art/%E4%B8%A4%E4%B8%AAaidl%E6%96%87%E4%BB%B6%E5%A4%B9.png"/>
-</p>
-
-上面的 aidl 文件夹，是系统创建 aidl 文件时，顺便创建的。在这个文件夹里存放的 aidl 文件，在项目编译时会生成对应的 java 文件。
-
-下面的 aidl 文件夹则是我们自己创建的文件夹。在这个文件夹里存放的 aidl 文件，在项目编译时不会生成对应的 java 文件。
+Android Studio 会根据我们编写的 aidl 文件来生成对应的 Binder 代码的 Java 文件，既然是生成 Java 文件，那我们也可以自己写 Java 文件，这样就不用再写 aidl 文件了？没错，我们完全可以抛开 aidl 文件直接写 Binder，说白了，aidl 的作用就是方便系统为我们生成代码。不过，在这篇文章中，我们还是要用 aidl 文件，来分析系统为我们生成的代码，进而分析 Binder 的上层原理。
 
 接着，我们再创建一个 IBookManager.aidl，IBookManager.aidl 中我们定义两个操作，一个是获取图书列表，一个是添加图书。之所以不用普通的接口（interface），而是用 aidl ，原因是为了跨进程。
 
@@ -123,10 +112,11 @@ interface IBookManager {
   <img src="https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/art/aidl%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90Binder%E7%B1%BB.png"/>
 </p>
 
-我们把这个 IBookManager.java 文件拷贝到 aidl 文件夹中，和 Book.java 放在一起。然后把刚刚写的 Book.aidl 和 IBookManager.aidl 从系统生成的 aidl 文件夹中转移到我们自己新建的 aidl 文件夹中。最终目录结构如下：
+我们把这个 IBookManager.java 文件拷贝到 binderdemo 文件夹中，和 Book.java 放在一起。然后把刚刚写的 Book.aidl 和 IBookManager.aidl 从系统生成的 aidl 文件夹中转移到 binderdemo 文件夹中。最终目录结构如下：
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/art/%E7%A7%BB%E5%8A%A8aidl%E6%96%87%E4%BB%B6.png"/>
 </p>
 
 之所以要移动 aidl 文件到我们自己创建的 aidl 目录，是因为 IBookManager.java 已经被我们移动到我们自己创建的 aidl 目录了，项目一编译，就会再根据 aidl 文件生成一个 IBookManager.java。这时就会报错。所以，为了让 aidl 文件不受编译影响，我们把 aidl 文件转移到我们自己创建的 aidl 文件夹中。
+
