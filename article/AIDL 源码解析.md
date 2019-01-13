@@ -7,10 +7,9 @@ public interface IBookManager extends android.os.IInterface {
     // 这个类，继承了 Binder，实现了 IBookManager
     // 调用 asInterface 时，它可以调用 IBookManager 的跨进程方法
     // 调用 asBinder 时，它可以关联 Binder 的死亡代理
-    public static abstract class Stub extends android.os.Binder implements com.example
-            .chapter2first.aidl.IBookManager {
+    public static abstract class Stub extends android.os.Binder implements IBookManager {
         // Binder 的唯一标识，一般用当前 Binder 的类名表示
-        private static final java.lang.String DESCRIPTOR = "com.example.chapter2first.aidl" +
+        private static final String DESCRIPTOR = "com.shadowwingz.binderdemo.aidl" +
                 ".IBookManager";
 
         /**
@@ -21,24 +20,24 @@ public interface IBookManager extends android.os.IInterface {
         }
 
         /**
-         * Cast an IBinder object into an com.example.chapter2first.aidl.IBookManager interface,
+         * Cast an IBinder object into an com.shadowwingz.binderdemo.aidl.IBookManager interface,
          * generating a proxy if needed.
          */
         // 用于将服务端的 Binder 对象转换成客户端所需的 AIDL 接口类型的对象，这种
         // 转换过程是区分进程的，如果客户端和服务端位于同一进程，那么此方法返回的就是
         // 服务端的 Stub 对象本身，否则返回的是系统封装后的 Stub.proxy 对象
-        public static com.example.chapter2first.aidl.IBookManager asInterface(android.os.IBinder
-                                                                                      obj) {
+        public static IBookManager asInterface(android.os.IBinder
+                                                       obj) {
             if ((obj == null)) {
                 return null;
             }
             android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);
-            if (((iin != null) && (iin instanceof com.example.chapter2first.aidl.IBookManager))) {
+            if (((iin != null) && (iin instanceof IBookManager))) {
                 // 不跨进程
-                return ((com.example.chapter2first.aidl.IBookManager) iin);
+                return ((IBookManager) iin);
             }
             // 跨进程
-            return new com.example.chapter2first.aidl.IBookManager.Stub.Proxy(obj);
+            return new Proxy(obj);
         }
 
         // 此方法用于返回当前 Binder 对象
@@ -65,7 +64,7 @@ public interface IBookManager extends android.os.IInterface {
                 }
                 case TRANSACTION_getBookList: {
                     data.enforceInterface(DESCRIPTOR);
-                    java.util.List<com.example.chapter2first.aidl.Book> _result = this
+                    java.util.List<Book> _result = this
                             .getBookList();
                     reply.writeNoException();
                     reply.writeTypedList(_result);
@@ -73,13 +72,7 @@ public interface IBookManager extends android.os.IInterface {
                 }
                 case TRANSACTION_addBook: {
                     data.enforceInterface(DESCRIPTOR);
-                    com.example.chapter2first.aidl.Book _arg0;
-                    if ((0 != data.readInt())) {
-                        _arg0 = com.example.chapter2first.aidl.Book.CREATOR.createFromParcel(data);
-                    } else {
-                        _arg0 = null;
-                    }
-                    this.addBook(_arg0);
+                    this.addBook();
                     reply.writeNoException();
                     return true;
                 }
@@ -89,7 +82,7 @@ public interface IBookManager extends android.os.IInterface {
 
         // Proxy 里的 getBookList 和 addBook 方法并不是具体的实现，而是
         // 跨进程调用相应的方法，具体的实现是由开发者完成。
-        private static class Proxy implements com.example.chapter2first.aidl.IBookManager {
+        private static class Proxy implements IBookManager {
             private android.os.IBinder mRemote;
 
             Proxy(android.os.IBinder remote) {
@@ -101,7 +94,7 @@ public interface IBookManager extends android.os.IInterface {
                 return mRemote;
             }
 
-            public java.lang.String getInterfaceDescriptor() {
+            public String getInterfaceDescriptor() {
                 return DESCRIPTOR;
             }
 
@@ -112,16 +105,16 @@ public interface IBookManager extends android.os.IInterface {
             // 服务端的 onTransact 方法会被调用，直到 RPC 过程返回后，当前线程继续执行，
             // 并从 _reply 中取出 RPC 过程的返回结果，最后返回 _reply 中的数据
             @Override
-            public java.util.List<com.example.chapter2first.aidl.Book> getBookList() throws
+            public java.util.List<Book> getBookList() throws
                     android.os.RemoteException {
                 android.os.Parcel _data = android.os.Parcel.obtain();
                 android.os.Parcel _reply = android.os.Parcel.obtain();
-                java.util.List<com.example.chapter2first.aidl.Book> _result;
+                java.util.List<Book> _result;
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
                     mRemote.transact(Stub.TRANSACTION_getBookList, _data, _reply, 0);
                     _reply.readException();
-                    _result = _reply.createTypedArrayList(com.example.chapter2first.aidl.Book.CREATOR);
+                    _result = _reply.createTypedArrayList(Book.CREATOR);
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -132,17 +125,11 @@ public interface IBookManager extends android.os.IInterface {
             // 这个方法运行在客户端，它的执行过程和 getBookList 是一样的，addBook 没有返回值，
             // 所以它不需要从 _reply 中取出返回值
             @Override
-            public void addBook(com.example.chapter2first.aidl.Book book) throws android.os.RemoteException {
+            public void addBook() throws android.os.RemoteException {
                 android.os.Parcel _data = android.os.Parcel.obtain();
                 android.os.Parcel _reply = android.os.Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
-                    if ((book != null)) {
-                        _data.writeInt(1);
-                        book.writeToParcel(_data, 0);
-                    } else {
-                        _data.writeInt(0);
-                    }
                     mRemote.transact(Stub.TRANSACTION_addBook, _data, _reply, 0);
                     _reply.readException();
                 } finally {
@@ -161,9 +148,8 @@ public interface IBookManager extends android.os.IInterface {
 
     // 声明了两个方法 getBookList 和 addBook
     // 也就是我们在 IBookManager.aidl 中声明的方法
-    public java.util.List<com.example.chapter2first.aidl.Book> getBookList() throws android.os.RemoteException;
+    public java.util.List<Book> getBookList() throws android.os.RemoteException;
 
-    public void addBook(com.example.chapter2first.aidl.Book book) throws android.os.RemoteException;
+    public void addBook() throws android.os.RemoteException;
 }
-
 ```
