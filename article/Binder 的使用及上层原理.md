@@ -84,29 +84,31 @@ parcelable Book;
 
 在 Book.aidl 中，我们只做了一件事，就是声明 Book 实体类。
 
-说到这里，我们要解释一下 aidl 文件是什么，以及为什么要创建 aidl 文件？
+说到这里，我们要解释一下 AIDL 文件是什么，以及为什么要创建 AIDL 文件？
 
-Android Studio 会根据我们编写的 aidl 文件来生成对应的 Binder 代码的 Java 文件，既然是生成 Java 文件，那我们也可以自己写 Java 文件，这样就不用再写 aidl 文件了？没错，我们完全可以抛开 aidl 文件直接写 Binder，说白了，aidl 的作用就是方便系统为我们生成代码。不过，在这篇文章中，我们还是要用 aidl 文件，来分析系统为我们生成的代码，进而分析 Binder 的上层原理。
+Android Studio 会根据我们编写的 AIDL 文件来生成对应的 Binder 代码的 Java 文件，既然是生成 Java 文件，那我们也可以自己写 Java 文件，这样就不用再写 AIDL 文件了？没错，我们完全可以抛开 AIDL 文件直接写 Binder，说白了，AIDL 的作用就是方便系统为我们生成代码。不过，在这篇文章中，我们还是要用 AIDL 文件，来分析系统为我们生成的代码，进而分析 Binder 的上层原理。
 
-接着，我们再创建一个 IBookManager.aidl，IBookManager.aidl 中我们定义两个操作，一个是获取图书列表，一个是添加图书。之所以不用普通的接口（interface），而是用 aidl ，原因是为了跨进程。
+接着，我们再创建一个 IBookManager.aidl，IBookManager.aidl 中我们定义两个操作，一个是获取图书列表，一个是添加图书。之所以不用普通的接口（interface），而是用 AIDL ，原因是为了跨进程。
 
 IBookManager.aidl 代码如下：
 
 ```java
 // IBookManager.aidl
-package com.shadowwingz.binderdemo.aidl;
+package com.shadowwingz.androidlifedemo.aidl;
 
-import com.shadowwingz.binderdemo.aidl.Book;
+import com.shadowwingz.androidlifedemo.aidl.Book;
 
 interface IBookManager {
     List<Book> getBookList();
-    void addBook();
+    void addBook(in Book book);
 }
 ```
 
-我们在 aidl 文件中写代码时，Android Studio 不会帮我们自动导包，另外，尽管 Book.aidl 和 IBookManager.aidl 在同一个文件夹下，但是还是需要导入 Book。所以，啥也别说了，手写导包，首先把 Book.aidl 导入。然后定义两个方法。
+AIDL 里定义了两个方法，其中 `addBook` 方法的形参类型 Book 前面有个 `in`，这个叫参数的方向。这里暂时不说太多，后面有时间再说。
 
-好了，aidl 文件已经准备好了，接下来，Rebuild 一下项目。我们会发现在 `build/generated/source/aidl/debug/包名` 目录多了一个 IBookManager.java 文件。
+我们在 AIDL 文件中写代码时，Android Studio 不会帮我们自动导包，另外，尽管 Book.aidl 和 IBookManager.aidl 在同一个文件夹下，但是还是需要导入 Book。所以，啥也别说了，手写导包，首先把 Book.aidl 导入。然后定义两个方法。
+
+好了，AIDL 文件已经准备好了，接下来，Rebuild 一下项目。我们会发现在 `build/generated/source/aidl/debug/包名` 目录多了一个 IBookManager.java 文件。
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/art/aidl%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90Binder%E7%B1%BB.png"/>
@@ -118,5 +120,308 @@ interface IBookManager {
   <img src="https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/art/%E7%A7%BB%E5%8A%A8aidl%E6%96%87%E4%BB%B6.png"/>
 </p>
 
-之所以要移动 aidl 文件到我们自己创建的 aidl 目录，是因为 IBookManager.java 已经被我们移动到我们自己创建的 aidl 目录了，项目一编译，就会再根据 aidl 文件生成一个 IBookManager.java。这时就会报错。所以，为了让 aidl 文件不受编译影响，我们把 aidl 文件转移到我们自己创建的 aidl 文件夹中。
+之所以要移动 AIDL 文件到我们自己创建的 binderdemo 目录，是因为 IBookManager.java 已经被我们移动到我们自己创建的 binderdemo 目录了，项目一编译，就会再根据 AIDL 文件生成一个 IBookManager.java。这时就会报错（重复文件）。所以，为了让 AIDL 文件不受编译影响，我们把 AIDL 文件转移到我们自己创建的 binderdemo 文件夹中。
 
+到这里，AIDL 的准备工作就差不多做好了，接下来，我们要使用 AIDL 进行进程间通信。也就是，刚刚我们打的比方，寄快递。
+
+首先，先介绍一下流程，这里假设进程 A 和进程 B 进行进程间通信，进程 A 会跨进程调用进程 B 的方法：
+
+1. 服务端
+
+这里的服务端并不是指服务器，而是指进程 B，也就是被调用的一端（这点在我刚学 Binder 的时候让我困惑了很久），并且，客户端和服务端也是相对的，进程 A 调用了进程 B 的方法，那么此时进程 A 就是客户端，进程 B 就是服务端，然后进程 B 又调用了进程 A 的方法，那么此时进程 B 就是客户端，进程 A 就是服务端。在本例中，我们只讨论进程 A 调用进程 B 的方法。
+
+服务端首先要创建一个 Service 用来监听客户端（进程 A）的连接请求，然后创建一个 AIDL 文件（刚刚我们创建的 IBookManager.aidl），将暴露给客户端的接口（getBookList 方法和 addBook 方法）在这个 AIDL 文件中声明，最后在 Service 中实现这个 AIDL 接口。
+
+2. 客户端
+
+客户端首先要绑定服务端的 Service，绑定成功后，将服务端返回的 Binder 对象转换成 AIDL 接口所属的类型，就可以调用 AIDL 中的方法了，也就是远程调用进程 B 的方法。
+
+3. AIDL 接口的创建
+
+其实刚刚我们已经创建好了，就是 IBookManager.aidl。
+
+4. 远程服务端（进程 B） Service 的实现
+
+我们先创建一个 Service，叫做 BookManagerService，代码如下：
+
+```java
+public class BookManagerService extends Service {
+
+    // 因为 Binder 的接口方法会在线程池中执行，所以需要用到支持并发读写的 CopyOnWriteArrayList
+    private CopyOnWriteArrayList<Book> mBookList = new CopyOnWriteArrayList<>();
+
+    // 实现 Binder 的接口方法，当客户端远程调用 getBookList 和 addBook 时，
+    // 这两个方法会在 Binder 线程池中执行。
+    private Binder mBinder = new IBookManager.Stub() {
+        @Override
+        public List<Book> getBookList() throws RemoteException {
+            LogUtil.d("服务端被调用，返回图书列表： " + mBookList + " 当前进程：" + Util.getProcessName(BookManagerService.this));
+            return mBookList;
+        }
+
+        @Override
+        public void addBook(Book book) throws RemoteException {
+            LogUtil.d("服务端被调用，添加图书： " + book + " 当前进程：" + Util.getProcessName(BookManagerService.this));
+            mBookList.add(book);
+        }
+    };
+
+    public BookManagerService() {
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // 添加两本图书信息
+        mBookList.add(new Book(1, "Android"));
+        mBookList.add(new Book(2, "Ios"));
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        // 返回 Binder 对象
+        return mBinder;
+    }
+}
+```
+
+上面是一个服务端 Service 的简单实现，因为我们是要跨进程通信的，所以 Service 需要运行在一个独立的进程，所以我们修改一下 AndroidManifest.xml：
+
+```xml
+<service
+    android:name=".binderdemo.BookManagerService"
+    android:process=":remote">
+</service>
+```
+
+然后，我们新建一个 BookManagerActivity，来作为客户端。在 BookManagerActivity 里，我们要绑定远程服务，绑定成功后将服务端返回的 Binder 对象转换为 AIDL 接口，然后就可以通过这个接口去调用服务端的方法了。
+
+```java
+public class BookManagerActivity extends AppCompatActivity {
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            IBookManager bookManager = IBookManager.Stub.asInterface(service);
+            try {
+                List<Book> bookList = bookManager.getBookList();
+                LogUtil.d("客户端添加图书之前，查询到的图书列表 " + bookList +
+                        " 当前进程：" + Util.getProcessName(BookManagerActivity.this));
+
+                Book newBook = new Book(3, "Android 开发艺术探索");
+                LogUtil.d("客户端添加图书 " + newBook +
+                        " 当前进程：" + Util.getProcessName(BookManagerActivity.this));
+                bookManager.addBook(newBook);
+
+                List<Book> newList = bookManager.getBookList();
+                LogUtil.d("客户端添加图书之后，查询到的图书列表 " + newList +
+                        " 当前进程：" + Util.getProcessName(BookManagerActivity.this));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_book_manager);
+        Intent intent = new Intent(this, BookManagerService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+}
+```
+
+我们在进行每个跨进程调用时，都打印了方法执行时所在的进程名。
+
+启动一下 app，打印日志如下：
+
+```
+服务端被调用，返回图书列表： [Book{mBookId=1, mBookName='Android'}, Book{mBookId=2, mBookName='Ios'}] 当前进程：com.shadowwingz.androidlifedemo:remote
+客户端添加图书之前，查询到的图书列表 [Book{mBookId=1, mBookName='Android'}, Book{mBookId=2, mBookName='Ios'}] 当前进程：com.shadowwingz.androidlifedemo
+客户端添加图书 Book{mBookId=3, mBookName='Android 开发艺术探索'} 当前进程：com.shadowwingz.androidlifedemo
+服务端被调用，添加图书： Book{mBookId=3, mBookName='Android 开发艺术探索'} 当前进程：com.shadowwingz.androidlifedemo:remote
+服务端被调用，返回图书列表： [Book{mBookId=1, mBookName='Android'}, Book{mBookId=2, mBookName='Ios'}, Book{mBookId=3, mBookName='Android 开发艺术探索'}] 当前进程：com.shadowwingz.androidlifedemo:remote
+客户端添加图书之后，查询到的图书列表 [Book{mBookId=1, mBookName='Android'}, Book{mBookId=2, mBookName='Ios'}, Book{mBookId=3, mBookName='Android 开发艺术探索'}] 当前进程：com.shadowwingz.androidlifedemo
+```
+
+可以发现，客户端和服务端的代码的确是执行在两个进程中。到这里，我们已经完整的使用 AIDL 完成了 IPC 过程。
+
+接下来，我们深入研究一下，在 IPC 的过程中，经历了那些流程。
+
+我们就从 bindService 开始，当我们调用下面的代码时：
+
+```java
+Intent intent = new Intent(this, BookManagerService.class);
+bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+```
+
+BookManagerService 被启动，mBookList 被实例化， mBinder 也被创建出来，BookManagerService 的 onCreate 方法也会被调用：
+
+```java
+private CopyOnWriteArrayList<Book> mBookList = new CopyOnWriteArrayList<>();
+
+private Binder mBinder = new IBookManager.Stub() {
+    @Override
+    public List<Book> getBookList() throws RemoteException {
+        LogUtil.d("服务端被调用，返回图书列表： " + mBookList + " 当前进程：" + Util.getProcessName(BookManagerService.this));
+        return mBookList;
+    }
+
+    @Override
+    public void addBook(Book book) throws RemoteException {
+        LogUtil.d("服务端被调用，添加图书： " + book + " 当前进程：" + Util.getProcessName(BookManagerService.this));
+        mBookList.add(book);
+    }
+};
+
+
+@Override
+public void onCreate() {
+    super.onCreate();
+    mBookList.add(new Book(1, "Android"));
+    mBookList.add(new Book(2, "Ios"));
+}
+
+@Override
+public IBinder onBind(Intent intent) {
+    return mBinder;
+}
+```
+
+这里重点说下 mBinder，mBinder 是 `IBookManager.Stub` 的实现类的实例，我们看下 `IBookManager.Stub`：
+
+```java
+public interface IBookManager extends android.os.IInterface {
+    public static abstract class Stub extends android.os.Binder implements IBookManager {
+        ......
+    }
+
+    public java.util.List<Book> getBookList() throws android.os.RemoteException;
+
+    public void addBook(Book book) throws android.os.RemoteException;
+}
+```
+
+可以看到，Stub 是个抽象类，它实现了 IBookManager 的接口，但是并没有实现 IBookManager 接口中的方法，IBookManager 接口中的方法是由开发者去实现，也就是我们去实现。
+
+关于 IBookManager.java 的讲解，可以看下 [AIDL 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/AIDL%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)。
+
+接着，由于我们是以 bindService 的方式启动的 Service，所以 BookManagerService 的 onBind 会被调用，mBinder 被返回：
+
+```java
+@Override
+public IBinder onBind(Intent intent) {
+    return mBinder;
+}
+```
+
+被返回到哪里呢？被返回到 BookManagerActivity 的 ServiceConnection 的 onServiceConnected 回调方法中。
+
+```java
+private ServiceConnection mConnection = new ServiceConnection() {
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        // service 就是 BookManagerService 返回的 mBinder
+        IBookManager bookManager = IBookManager.Stub.asInterface(service);
+        ......
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+
+    }
+```
+
+BookManagerActivity 收到 mBinder 之后，会通过 `IBookManager.Stub.asInterface` 方法把 Binder 转换为接口。为什么要转换呢？
+
+首先，是因为要调用接口的方法，我们定义的 `getBookList` 方法和 `addBook` 方法是写在 IBookManager 接口中，不转换成 IBookManager 就没办法调用接口中方法了。
+第二，asInterface 方法会根据客户端和服务端是否在同一进程而返回不同的接口对象，如果是在同一进程，就直接返回服务端的 Stub 本身，如果不在同一进程，就返回系统封装后的 `Stub.proxy` 对象。
+
+```java
+if (((iin != null) && (iin instanceof IBookManager))) {
+    return ((IBookManager) iin);
+}
+return new Proxy(obj);
+```
+
+由于我们的客户端和服务端不在同一进程，所以 asInterface 方法返回的是 `Stub.proxy` 对象。
+
+```java
+private static class Proxy implements IBookManager {
+}
+```
+
+好了，到这里，我们就拿到 IBookManager 接口了，接着，我们调用 `getBookList` 方法去查询图书列表：
+
+```java
+List<Book> bookList = bookManager.getBookList();
+```
+
+在我们调用了 `bookManager.getBookList()` 方法之后，在内部会调用 Proxy 的 getBookList 方法，getBookList 方法运行在客户端，接着，创建 `getBookList` 方法所需要的输入型 Parcel 对象 _data，输出型 Parcel 对象 _reply 和返回值对象 _result。
+
+_data 就是我们调用 getBookList 方法时传入的参数，当然，这里我们没有传入参数，所以 _data 就是一个空的 Parcel 数据。
+
+_reply 就是我们调用 `getBookList` 方法后，方法返回的结果，也是 Parcel 数据。
+
+_result 就是我们从 Parcel 数据中解析出的我们真正想要的数据 List。
+
+接着，会调用 transact 方法发起 RPC（远程过程调用）请求，同时当前线程挂起（简单理解，就是先暂停着）。
+
+这个请求会通过系统底层封装后交给 onTransact 方法处理：
+
+```java
+@Override
+public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel reply, int
+        flags) throws android.os.RemoteException {
+    switch (code) {
+        case INTERFACE_TRANSACTION: {
+            reply.writeString(DESCRIPTOR);
+            return true;
+        }
+        case TRANSACTION_getBookList: {
+            data.enforceInterface(DESCRIPTOR);
+            java.util.List<Book> _result =
+                    this.getBookList();
+            reply.writeNoException();
+            reply.writeTypedList(_result);
+            return true;
+        }
+        case TRANSACTION_addBook: {
+            data.enforceInterface(DESCRIPTOR);
+            Book _arg0;
+            if ((0 != data.readInt())) {
+                _arg0 = Book.CREATOR
+                        .createFromParcel(data);
+            } else {
+                _arg0 = null;
+            }
+            this.addBook(_arg0);
+            reply.writeNoException();
+            return true;
+        }
+    }
+    return super.onTransact(code, data, reply, flags);
+}
+
+static final int TRANSACTION_getBookList = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
+static final int TRANSACTION_addBook = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
+```
+
+onTransact 方法的第一个参数是 code，当我们调用 `bookManager.getBookList()` 方法之后，服务端就根据 code 去查找客户端要调用的方法是什么，这里 `getBookList` 的 code 是 `TRANSACTION_getBookList`，于是就走到了 onTransact 的 `TRANSACTION_getBookList` case 中：
+
+```java
+case TRANSACTION_getBookList: {
+                    data.enforceInterface(DESCRIPTOR);
+                    java.util.List<Book> _result =
+                            this.getBookList();
+                    reply.writeNoException();
+                    reply.writeTypedList(_result);
+                    return true;
+                }
+```
