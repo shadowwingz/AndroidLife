@@ -363,7 +363,7 @@ private static class Proxy implements IBookManager {
 List<Book> bookList = bookManager.getBookList();
 ```
 
-在我们调用了 `bookManager.getBookList()` 方法之后，在内部会调用 Proxy 的 getBookList 方法，getBookList 方法运行在客户端，接着，创建 `getBookList` 方法所需要的输入型 Parcel 对象 _data，输出型 Parcel 对象 _reply 和返回值对象 _result。
+在我们调用了 `bookManager.getBookList()` 方法之后，在内部会调用 Proxy 的 getBookList 方法，getBookList 方法运行在客户端，接着创建 `getBookList` 方法所需要的输入型 Parcel 对象 _data，输出型 Parcel 对象 _reply 和返回值对象 _result。
 
 _data 就是我们调用 getBookList 方法时传入的参数，当然，这里我们没有传入参数，所以 _data 就是一个空的 Parcel 数据。
 
@@ -371,9 +371,20 @@ _reply 就是我们调用 `getBookList` 方法后，方法返回的结果，也�
 
 _result 就是我们从 Parcel 数据中解析出的我们真正想要的数据 List。
 
-接着，会调用 transact 方法发起 RPC（远程过程调用）请求，同时当前线程挂起（简单理解，就是先暂停着）。
+接着，会调用 transact 方法发起 RPC（远程过程调用）请求，同时当前线程挂起（简单理解，就是先暂停着）。我们看下 transact 方法：
 
-这个请求会通过系统底层封装后交给 onTransact 方法处理：
+```java
+IBinder # transact
+
+// code 是一个数字，表示客户端要执行的操作
+// flags 我们这里不分析
+public boolean transact(int code, Parcel data, Parcel reply, int flags)
+    throws RemoteException;
+```
+
+data 和 reply 我们刚刚说了，这里就不多说了。这里重点说下 code，首先我们可以看到，code 是一个 int 型数字，它表示了客户端要执行的操作，为什么这么说呢？当客户端调用服务端的方法时，会把 code 传递过去，然后服务端会去寻找它有没有这个 code，如果找到了 code，就去执行相应的方法，也就是客户端想调用的方法。在这个例子中，code 就是 `TRANSACTION_getBookList`。从这里我们也可以分析出，客户端调用服务端的方法也不是直接就跨进程调用了，而是要根据 code 来寻找有没有要调用的方法，有就调用，没有就没办法调用了。
+
+我们继续分析，当调用了 transact 后，这个调用请求会通过系统底层封装后交给 onTransact 方法处理，onTransact 是运行在服务端的，也就是说，现在方法已经执行到服务端了。
 
 ```java
 @Override
@@ -384,6 +395,8 @@ public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel re
             reply.writeString(DESCRIPTOR);
             return true;
         }
+        // 刚刚客户端传递过来的 code 是 TRANSACTION_getBookList，
+        // 服务端查找自己这边有没有 TRANSACTION_getBookList 这个 code。
         case TRANSACTION_getBookList: {
             data.enforceInterface(DESCRIPTOR);
             java.util.List<Book> _result =
@@ -413,15 +426,57 @@ static final int TRANSACTION_getBookList = (android.os.IBinder.FIRST_CALL_TRANSA
 static final int TRANSACTION_addBook = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
 ```
 
-onTransact 方法的第一个参数是 code，当我们调用 `bookManager.getBookList()` 方法之后，服务端就根据 code 去查找客户端要调用的方法是什么，这里 `getBookList` 的 code 是 `TRANSACTION_getBookList`，于是就走到了 onTransact 的 `TRANSACTION_getBookList` case 中：
+刚刚我们说了，当我们调用 `bookManager.getBookList()` 方法之后，服务端就根据 code 去查找客户端要调用的方法是什么，这里 `getBookList` 的 code 是 `TRANSACTION_getBookList`，于是就走到了 onTransact 的 `TRANSACTION_getBookList` case 中，于是就调用了 `this.getBookList()` 方法，也就是 BookManagerService 中实现的 Binder 方法：
 
 ```java
-case TRANSACTION_getBookList: {
-                    data.enforceInterface(DESCRIPTOR);
-                    java.util.List<Book> _result =
-                            this.getBookList();
-                    reply.writeNoException();
-                    reply.writeTypedList(_result);
-                    return true;
-                }
+private Binder mBinder = new IBookManager.Stub() {
+    @Override
+    public List<Book> getBookList() throws RemoteException {
+        LogUtil.d("服务端被调用，返回图书列表： " + mBookList + " 当前进程：" + Util.getProcessName(BookManagerService.this));
+        return mBookList;
+    }
+
+    ......
+};
 ```
+
+到这里，终于完成了跨进程调用，但是还没完，因为这只是调用了服务端的 `getBookList` 方法，获取到了图书列表，接下来还要把这个图书列表返回到客户端才算完事。
+
+OK，那我们继续分析，还是看下 onTransact 方法里的 TRANSACTION_getBookList 的 case：
+
+```java
+java.util.List<Book> _result = this.getBookList();
+reply.writeNoException();
+reply.writeTypedList(_result);
+return true;
+```
+
+可以看到，返回的图书列表被赋值给了 _result，然后调用 `reply.writeTypedList(_result)` 方法把 _result 封装到了 _reply 中。为什么要封装呢？List 本身是不支持跨进程传输的，所以我们要把 List 转换成支持跨进程传输的类型，也就是 Parcel 类型。也就是上文的打比方，寄快递，只有把书装到快递袋里，快递才能帮你运输。
+
+`reply.writeTypedList(_result)` 方法执行完后，reply 中就有图书列表了。然后执行下一句代码，`return true`，到这里，RPC 过程结束，回到客户端刚刚挂起的方法的地方，注意，从这里开始，就从服务端又回到了客户端：
+
+```java
+@Override
+public java.util.List<Book> getBookList()
+        throws android.os.RemoteException {
+    android.os.Parcel _data = android.os.Parcel.obtain();
+    android.os.Parcel _reply = android.os.Parcel.obtain();
+    java.util.List<Book> _result;
+    try {
+        _data.writeInterfaceToken(DESCRIPTOR);
+        // 客户端挂起
+        mRemote.transact(Stub.TRANSACTION_getBookList, _data, _reply, 0);
+        _reply.readException();
+        // _reply 中就是刚刚获取的图书列表，因为 _reply 是 Parcel 类型的数据，
+        // 我们没法直接用，所以要从 _reply 中把图书列表取出来，存入 _result 中
+        _result = _reply.createTypedArrayList(Book.CREATOR);
+    } finally {
+        _reply.recycle();
+        _data.recycle();
+    }
+    return _result;
+```
+
+可以看到，客户端也拿到了服务端返回的数据，服务端返回的数据是在 _reply 中，然后我们从 _reply 中取出图书列表。到这里，Proxy 的 getBookList 方法就返回图书列表了。接着，在 BookManagerActivity 的 onServiceConnected 中，`bookManager.getBookList` 也返回了图书列表。
+
+到这里，一次完整的 IPC 过程就分析完了。
