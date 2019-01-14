@@ -1,3 +1,5 @@
+### [Demo 地址](https://github.com/shadowwingz/AndroidLifeDemo/tree/master/AndroidLifeDemo/app/src/main/java/com/shadowwingz/androidlifedemo/binderdemo) ###
+
 Binder 的重要性就不用我多说了，Binder 的难度就更不用我多说了，所以即使《Android 开发艺术探索》里的 Binder 章节已经看了不少遍了，但是还是决定写篇文章，好好捋一捋 Binder。
 
 行了，废话不多说，我们先来建个项目，然后新建个 binderdemo 文件夹，用于存放 Binder 相关的文件。我们先在 binderdemo 文件夹下新建个 Book.java，代码如下：
