@@ -30,5 +30,12 @@ AndroidLife
     - [RemoteViews 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/RemoteViews%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
     - Window 的内部机制
         - [Window 的添加过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/Window%20%E7%9A%84%E6%B7%BB%E5%8A%A0%E8%BF%87%E7%A8%8B.md)
+        - Window 的删除过程
+        - Window 的更新过程
     - [LayoutInflater 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/LayoutInflater%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
+    - setContentView 源码解析
+
+
+- 细节知识点
+    - `setResult` 调用时机
 
