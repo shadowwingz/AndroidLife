@@ -9,7 +9,7 @@ inflater.inflate(resourceId, root)
 
 首先，使用 `LayoutInflater.from(context)` 获取到 LayoutInflater 对象，然后调用 LayoutInflater 的 `inflate` 方法去加载布局就行了。这里要注意，`inflate` 有两个参数，第一个参数是要加载的布局 id，第二个参数是该布局的父布局。
 
-我们来试一下，首先新建一个 `LayoutInflaterActivity`，然后修改 `LayoutInflaterActivity` 的布局文件 `activity_layout_inflater.xml`，给 LinearLayout 加一个 id，方便等下  `LayoutInflaterActivity` 中通过 findViewById 来找到这个 LinearLayout。代码如下：
+我们来试一下，首先新建一个 `LayoutInflaterActivity`，然后修改 `LayoutInflaterActivity` 的布局文件 `activity_layout_inflater.xml`，给 LinearLayout 加一个 id，方便等下  `LayoutInflaterActivity` 中通过 `findViewById` 来找到这个 LinearLayout。代码如下：
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -23,7 +23,7 @@ inflater.inflate(resourceId, root)
 </LinearLayout>
 ```
 
-新建一个 button_layout.xml，代码如下：
+新建一个 `button_layout.xml`，代码如下：
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -36,7 +36,7 @@ inflater.inflate(resourceId, root)
 </Button>
 ```
 
-这个布局文件很简单，只有一个按钮。接下来，我们就要使用 LayoutInflater 把这个按钮添加到 Activity 的 LinearLayout 中。刚刚我们说了，有一个 inflate 方法可以加载布局，我们试下这个方法，修改 LayoutInflaterActivity：
+这个布局文件很简单，只有一个按钮。接下来，我们就要使用 LayoutInflater 把这个按钮添加到 Activity 的 LinearLayout 中。刚刚我们说了，有一个 `inflate` 方法可以加载布局，我们试下这个方法，修改 LayoutInflaterActivity：
 
 ```java
 public class LayoutInflaterActivity extends AppCompatActivity {
@@ -52,7 +52,7 @@ public class LayoutInflaterActivity extends AppCompatActivity {
 }
 ```
 
-我们先实例化了 LinearLayout，也就是 mainLayout。然后获取了 LayoutInflater 的实例，最后调用 inflate 方法加载了布局。
+我们先实例化了 LinearLayout，也就是 mainLayout。然后获取了 LayoutInflater 的实例，最后调用 `inflate` 方法加载了布局。
 
 运行一下项目：
 
@@ -161,13 +161,13 @@ public View inflate(XmlPullParser parser, ViewGroup root, boolean attachToRoot) 
 
 上面的 inflate 方法中，主要有下面几步：
 
-（1）解析 xml 中的根标签（本例中是 Button），如果根标签是 merge，就直接将 merge 标签下的所有子 View 添加到根标签中；
-（2）如果根标签是普通元素，就解析出根标签 temp 对应的 View；
-（3）解析 temp 视图下的所有子 View 并添加到 temp 视图中（本例中没有子 View）；
-（4）如果 attacgToRoot 为 true，就把 temp 视图添加到 root 中，并返回 root 视图
-（5）如果 attacgToRoot 为 false，就直接返回 temp 视图。
+1. 解析 xml 中的根标签（本例中是 Button），如果根标签是 merge，就直接将 merge 标签下的所有子 View 添加到根标签中；
+2. 如果根标签是普通元素，就解析出根标签 temp 对应的 View；
+3. 解析 temp 视图下的所有子 View 并添加到 temp 视图中（本例中没有子 View）；
+4. 如果 `attacgToRoot` 为 true，就把 temp 视图添加到 root 中，并返回 root 视图
+5. 如果 `attacgToRoot` 为 false，就直接返回 temp 视图。
 
-我们这里分析下 attachToRoot 这个参数，它是 true 或者 false 对布局解析有什么影响？我们修改一下 LayoutInflaterActivity 代码：
+我们这里分析下 `attachToRoot` 这个参数，它是 true 或者 false 对布局解析有什么影响？我们修改一下 LayoutInflaterActivity 代码：
 
 ```java
 public class LayoutInflaterActivity extends AppCompatActivity {
@@ -184,7 +184,7 @@ public class LayoutInflaterActivity extends AppCompatActivity {
 }
 ```
 
-之前的 inflate 方法中，我们传入了 2 个参数，这次我们传入 3 个参数，第三个参数就是 attachToRoot，这里我们传入 true。
+之前的 `inflate` 方法中，我们传入了 2 个参数，这次我们传入 3 个参数，第三个参数就是 `attachToRoot`，这里我们传入 true。
 
 运行一下：
 
@@ -192,7 +192,7 @@ public class LayoutInflaterActivity extends AppCompatActivity {
 
 Button 可以显示出来。
 
-接着，我们把 attachToRoot 参数修改为 false：
+接着，我们把 `attachToRoot` 参数修改为 `false`：
 
 ```java
 public class LayoutInflaterActivity extends AppCompatActivity {
@@ -216,7 +216,7 @@ public class LayoutInflaterActivity extends AppCompatActivity {
 
 Button 显示不出来了。
 
-很奇怪，我们明明传入了布局文件和父布局，只是把 attachToRoot 设置为 false，Button 就加载不出来了。是什么原因呢？我们再看看源码，找一下哪些地方用到了 attachToRoot：
+很奇怪，我们明明传入了布局文件和父布局，只是把 `attachToRoot` 设置为 `false`，Button 就加载不出来了。是什么原因呢？我们再看看源码，找一下哪些地方用到了 `attachToRoot`：
 
 ```java
 // root 是父布局
@@ -245,9 +245,9 @@ if (root == null || !attachToRoot) {
 return result;
 ```
 
-如果 attachToRoot 为 true，那么会执行代码『2』，`root.addView(temp, params)` 这句代码会把 temp 布局添加到父布局中，然后返回父布局。这样 Button 就可以显示出来了，这个好理解。
+如果 `attachToRoot` 为 `true`，那么会执行代码『2』，`root.addView(temp, params)` 这句代码会把 temp 布局添加到父布局中，然后返回父布局。这样 Button 就可以显示出来了，这个好理解。
 
-如果 attachToRoot 为 false，那么会执行代码『1』和代码『3』，代码『1』会给 Button 设置 LayoutParams，设置了 LayoutParams，Button 才能知道自己在父布局中的宽高。接着执行代码『3』，把 temp 赋值给 result，最后返回 result，此时的 result 就是加载好的 Button。
+如果 `attachToRoot` 为 `false`，那么会执行代码『1』和代码『3』，代码『1』会给 Button 设置 `LayoutParams`，设置了 `LayoutParams`，Button 才能知道自己在父布局中的宽高。接着执行代码『3』，把 `temp` 赋值给 `result`，最后返回 `result`，此时的 `result` 就是加载好的 Button。
 
 有的童鞋可能会疑惑，Button 都创建出来了，也返回了，为什么没有显示出来？
 
@@ -326,9 +326,9 @@ View createViewFromTag(View parent, String name, AttributeSet attrs, boolean inh
 }
 ```
 
-当 tag 的名字中没有包含 `.` 时，LayoutInflate 会认为这是一个内置的 View，比如我们平常用的 Button，Text，这时，会调用 onCreateView 来解析这个 View。当我们自定义 View 时，在 xml 中写的是 View 的完整路径，比如： `<com.example.MyView>`。
+当 tag 的名字中没有包含 `.` 时，LayoutInflate 会认为这是一个内置的 View，比如我们平常用的 Button，Text，这时，会调用 `onCreateView` 来解析这个 View。当我们自定义 View 时，在 xml 中写的是 View 的完整路径，比如： `<com.example.MyView>`。
 
-在 onCreateView 内部调用的其实还是 createView，只是把 `android.widget` 前缀传递给了 `createView` 方法，这样就有了内置 View 的完整路径。再看下 `createView` 方法。
+在 `onCreateView` 内部调用的其实还是 `createView`，只是把 `android.widget` 前缀传递给了 `createView` 方法，这样就有了内置 View 的完整路径。再看下 `createView` 方法。
 
 ```java
 LayoutInflate # createView
@@ -426,4 +426,4 @@ void rInflate(XmlPullParser parser, View parent, final AttributeSet attrs,
 }
 ```
 
-rInflate 通过深度优先遍历来构造视图树，每解析到一个 View 元素就会递归调用 rInflate，直到这条路径下的最后一个元素，然后再回溯过来将每个 View 元素添加到它们的 parent 中，通过 rInflate 的解析之后，整颗视图树就构建完毕。这时，控件和它里面的子 View 就显示出来了。
+`rInflate` 通过深度优先遍历来构造视图树，每解析到一个 View 元素就会递归调用 `rInflate`，直到这条路径下的最后一个元素，然后再回溯过来将每个 View 元素添加到它们的 `parent` 中，通过 `rInflate` 的解析之后，整颗视图树就构建完毕。这时，控件和它里面的子 View 就显示出来了。
