@@ -1,3 +1,5 @@
+### [Demo 地址](https://github.com/shadowwingz/AndroidLifeDemo/tree/master/AndroidLifeDemo/app/src/main/java/com/shadowwingz/androidlifedemo/layoutinflaterdemo) ###
+
 LayoutInflater 想必大家都不陌生，我们加载布局的时候用的就是它。先回忆下我们是怎么使用 LayoutInflater 的。
 
 ```java
@@ -164,8 +166,8 @@ public View inflate(XmlPullParser parser, ViewGroup root, boolean attachToRoot) 
 1. 解析 xml 中的根标签（本例中是 Button），如果根标签是 merge，就直接将 merge 标签下的所有子 View 添加到根标签中；
 2. 如果根标签是普通元素，就解析出根标签 temp 对应的 View；
 3. 解析 temp 视图下的所有子 View 并添加到 temp 视图中（本例中没有子 View）；
-4. 如果 `attacgToRoot` 为 true，就把 temp 视图添加到 root 中，并返回 root 视图
-5. 如果 `attacgToRoot` 为 false，就直接返回 temp 视图。
+4. 如果 `attachToRoot` 为 true，就把 temp 视图添加到 root 中，并返回 root 视图
+5. 如果 `attachToRoot` 为 false，就直接返回 temp 视图。
 
 我们这里分析下 `attachToRoot` 这个参数，它是 true 或者 false 对布局解析有什么影响？我们修改一下 LayoutInflaterActivity 代码：
 
@@ -279,6 +281,61 @@ public class LayoutInflaterActivity extends AppCompatActivity {
 可以看到，Button 显示出来了。
 
 到这里，attachToRoot 参数我们基本就讲完了。
+
+我们再讲下第二个参数，有的童鞋可能会疑惑，第二个参数不是明摆着让你传个 ViewGroup 嘛。没错，`inflate` 方法的第二个参数的确是 ViewGroup，但是这个参数也可以传入 `null`。
+
+我们先试验一下，修改 LayoutInflaterActivity 代码如下：
+
+```java
+public class LayoutInflaterActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_layout_inflater);
+        ViewGroup mainLayout = (ViewGroup) findViewById(R.id.main_layout);
+        LayoutInflater inflater = LayoutInflater.from(this);
+//        inflater.inflate(R.layout.button_layout, mainLayout);
+//        inflater.inflate(R.layout.button_layout, mainLayout, true);
+//        View view = inflater.inflate(R.layout.button_layout, mainLayout, false);
+//        mainLayout.addView(view);
+        View view = inflater.inflate(R.layout.button_layout, null);
+        mainLayout.addView(view);
+    }
+}
+```
+
+我们把 inflate 的第二个参数改成了 `null`，同时，我们把第三个参数去掉了，从源码我们可以知道，当 `root` 为 `null` 时，`attachToRoot` 参数的有无其实并没有影响。
+
+运行一下：
+
+![](https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/art/LayoutInflater%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/3.png)
+
+我们发现，Button 不但显示出来了，而且还变宽了，撑满了全屏。
+
+为什么 `root` 为 `null` 时，会变成这样？这里先简单的解释一下，是因为 LayoutParams。我们看下这几句代码：
+
+```java
+params = root.generateLayoutParams(attrs);
+if (!attachToRoot) {
+    // Set the layout params for temp if we are not
+    // attaching. (If we are, we use addView, below)
+    temp.setLayoutParams(params);
+}
+```
+
+这几句代码是 `inflate` 方法源码的一部分，当 `root` 为 `null` 时，上面的几句代码是不执行的。那么这几句代码为什么会影响 Button 的显示效果？因为 LayoutParams，temp 没有设置 LayoutParams，父布局就没办法对它进行约束，这里先解释到这里，我准备单独用一篇文章来讲解 LayoutParams。
+
+那么我们可以总结一下 inflate 方法了：
+
+| 方法 | 解释 |
+| ------ | ------ |
+| `inflate(resId, null)`| 只创建 temp 的 View，然后直接返回 temp |
+| `inflate(resId, null, false)`| 只创建 temp 的 View，然后直接返回 temp |
+| `inflate(resId, null, true)`| 只创建 temp 的 View，然后直接返回 temp |
+| `inflate(resId, root)`| 创建 temp 的 View，然后执行 `root.addView(temp, params)` 最后返回 root |
+| `inflate(resId, root, true)`| 创建 temp 的 View，然后执行 `root.addView(temp, params)` 最后返回 root |
+| `inflate(resId, root, false)`| 创建 temp 的 View，然后执行 `temp.setLayoutParams(params)` 最后返回 temp |
 
 我们接着看下 `createViewFromTag` 方法，这个方法是用来把我们在 xml 布局文件中写的控件转换成 java 版的控件，可以理解为，把控件从 xml 描述转换为 java 描述，比如说，上面我们在 xml 布局文件中写了一个 `<Button>`，它会被转换成 Button 对象。我们看下代码：
 
