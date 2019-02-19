@@ -48,7 +48,7 @@ protected void measureChild(View child, int parentWidthMeasureSpec,
 
 子元素的 LayoutParams 是从哪来的呢？是根据布局文件里写的尺寸参数，比如 `match_parent` ，或者具体的尺寸创建的。
 
-总之，子元素有了 MeasureSpec，接着，子元素就去测量自己的尺寸去了，具体的流程已经在 [View 的测量原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/View%20%E7%9A%84%E6%B5%8B%E9%87%8F%E5%8E%9F%E7%90%86.md) 中分析了，这里就不再多说了。
+总之，子元素有了 MeasureSpec，接着，子元素就去测量自己的尺寸去了，具体的流程已经在 [View 的 draw 原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/View%20%E7%9A%84%20draw%20%E5%8E%9F%E7%90%86.md) 中分析了，这里就不再多说了。
 
 子元素测量好了，接下来就该测量父容器自己了。但是我们在 ViewGroup 源码中可以发现，ViewGroup 并没有重写 `onMeasure` 方法。这是为什么呢？因为根本就没法重写，没办法，不同的 ViewGroup 子类有自己独特的布局特性，回忆一下我们使用的 LinearLayout 和 RelativeLayout，它们使用起来差异就很大，所以测量细节肯定是不同的。具体测量细节请看
 
