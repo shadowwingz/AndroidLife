@@ -34,6 +34,7 @@ AndroidLife
         - Window 的更新过程
     - [LayoutInflater 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/LayoutInflater%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
     - setContentView 源码解析
+    - LayoutParams 解析
 
 
 - 细节知识点
