@@ -1,3 +1,5 @@
+### [Demo 地址](https://github.com/shadowwingz/AndroidLifeDemo/tree/master/AndroidLifeDemo/app/src/main/java/com/shadowwingz/androidlifedemo/layoutparamsdemo) ###
+
 在 [View 的 measure 原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/View%20%E7%9A%84%20measure%20%E5%8E%9F%E7%90%86.md) 中，我们提到了：
 
 > View 的大小由 View 的 MeasureSpec 的 specSize 决定，而 View 的 MeasureSpec 又由 View 的 LayoutParams 和父容器的 MeasureSpec 决定。
