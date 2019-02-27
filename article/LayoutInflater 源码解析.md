@@ -324,7 +324,7 @@ if (!attachToRoot) {
 }
 ```
 
-这几句代码是 `inflate` 方法源码的一部分，当 `root` 为 `null` 时，上面的几句代码是不执行的。那么这几句代码为什么会影响 Button 的显示效果？因为 LayoutParams，temp 没有设置 LayoutParams，父布局就没办法对它进行约束，这里先解释到这里，我准备单独用一篇文章来讲解 LayoutParams。
+这几句代码是 `inflate` 方法源码的一部分，当 `root` 为 `null` 时，上面的几句代码是不执行的。那么这几句代码为什么会影响 Button 的显示效果？因为 LayoutParams，temp 没有设置 LayoutParams，导致父布局 LinearLayout 给子 View 生成了一个默认的宽度为 `match_parent`，高度为 `wrap_content` 的 LayoutParams，更详细的解释请看 [LayoutParams 解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/LayoutParams%E8%A7%A3%E6%9E%90.md)。
 
 那么我们可以总结一下 inflate 方法了：
 
