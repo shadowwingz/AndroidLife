@@ -39,4 +39,5 @@ AndroidLife
 
 - 细节知识点
     - `setResult` 调用时机
+    - compileSdkVersion、minSdkVersion、targetSdkVersion 含义
 
