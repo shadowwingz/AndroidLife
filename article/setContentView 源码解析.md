@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/art/setContentView%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/setContentView%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.jpg"/>
+</p>
+
 对于安卓开发者用来，见的最多的应该就是 `setContentView` 了。这句代码我们也知道它意思了，就是把布局文件设置给 Activity，让 Activity 的界面显示出来。那么，它的内部是怎么实现的呢？
 
 在研究它的内部实现之前，我们先看一张图，图片来自网络。
