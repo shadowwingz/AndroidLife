@@ -125,7 +125,7 @@ protected ViewGroup generateLayout(DecorView decor) {
     decor.addView(in, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
     mContentRoot = (ViewGroup) in;
 
-    // 获取到 DecorView 中
+    // 实例化 DecorView 中 id 为 content 的 ViewGroup，这个 ViewGroup 就是 Activity 布局的父布局
     ViewGroup contentParent = (ViewGroup)findViewById(ID_ANDROID_CONTENT);
 
     ......
