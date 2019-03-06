@@ -77,3 +77,11 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
     // 当前版本低于 11，无法调用 ActionBar，执行其它代码
 }
 ```
+
+### targetSdkVersion ###
+
+Android 系统的版本是在不断升级的，而在升级的过程中，会不断加入新的特性。
+
+以 `运行时权限` 为例，`运行时权限` 是在 Android 6.0 （API level 23）中加入的，如果把 `targetSdkVersion` 设置为 23，然后申请运行时权限，如果 apk 运行在 Android 6.0 的手机上，那么 `Context` 的 `checkSelfPermission` 接口是没有问题的，可以查询出有没有授权权限。但是如果 apk 运行在 Android 5.1 的手机上，那么 `Context` 的 `checkSelfPermission` 接口会失效，返回值一直是 true。
+
+所以，如果我们想使用一些新版本的特性，需要把 `targetSdkVersion` 设置为新版本的 API level。如果没有把 `targetSdkVersion` 设置为新版本的 API level，又使用了新版本的特性，那么 app 运行时，新版本的特性是不会生效的。 
