@@ -44,6 +44,10 @@ AndroidLife
             - 广播的发送和接收过程
         - ContentProvider 的工作过程
 
+- 开源框架源码解析
+    - [EventBus 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus.md)
+        - [EventBus 注册订阅者源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus_register.md)
+
 
 - 细节知识点
     - `setResult` 调用时机
