@@ -40,7 +40,7 @@ EventBus 的基本用法到这里我们基本就过了一遍，那么我们的�
 
 - `EventBus.getDefault().register(this)` 这句代码，EventBus 是怎么注册订阅者的
 
-[EventBus 注册订阅者源码解析]()
+[EventBus 注册订阅者源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus_register.md)
 
 - `EventBus.getDefault().post(new Event())` 这句代码，EventBus 是怎么发送事件的
 
