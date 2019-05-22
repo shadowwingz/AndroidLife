@@ -268,6 +268,7 @@ private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
         }
     }
 
+    // 将订阅者 subscriber 和所有订阅方法的参数类型 subscribedEvents 保存到 typesBySubscriber 中
     List<Class<?>> subscribedEvents = typesBySubscriber.get(subscriber);
     if (subscribedEvents == null) {
         subscribedEvents = new ArrayList<>();
@@ -275,6 +276,7 @@ private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
     }
     subscribedEvents.add(eventType);
 
+    // 如果接收 sticky 事件，就分发 sticky 事件
     if (subscriberMethod.sticky) {
         if (eventInheritance) {
             // Existing sticky events of all subclasses of eventType have to be considered.
@@ -296,3 +298,11 @@ private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
     }
 }
 ```
+
+subscribe 方法里其实就只干了一件事，保存订阅类和订阅方法。只不过其中有些细节要注意，比如 EventBus 会根据优先级 priority 来保存，高优先级的会先保存。
+
+到这里，EventBus 的注册流程我们就分析完了，我们最后再总结一下：
+
+> EventBus 会通过反射来解析订阅类，从而获取到订阅类所有的订阅方法，然后把订阅类和订阅方法保存起来。
+
+EventBus 的注册流程我们清楚了，接着我们再来分析 [EventBus 的发送事件流程](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus_post.md)。
