@@ -48,6 +48,7 @@ AndroidLife
     - [EventBus 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus.md)
         - [EventBus 注册订阅者源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus_register.md)
         - [EventBus 发送事件源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus_post.md)
+        - [EventBus 源码 + 注释](https://github.com/shadowwingz/EventBus)
 
 
 - 细节知识点

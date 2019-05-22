@@ -44,7 +44,7 @@ EventBus 的基本用法到这里我们基本就过了一遍，那么我们的�
 
 - `EventBus.getDefault().post(new Event())` 这句代码，EventBus 是怎么发送事件的
 
-[EventBus 发送事件源码解析]()
+[EventBus 发送事件源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus_post.md)
 
 - `onReceive` 方法，是怎么接收到事件的
 
