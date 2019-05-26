@@ -163,3 +163,5 @@ void invokeSubscriber(Subscription subscription, Object event) {
 到这里，EventBus 的发送事件流程我们就分析完了，我们最后再总结一下：
 
 > EventBus 会先把要发送的事件添加到队列中，然后队列中的事件发送给事件的订阅者。
+
+EventBus 的发送事件流程我们清楚了，接着我们再来分析 [EventBus 的解除注册流程](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus_post.md)。
