@@ -55,6 +55,9 @@ AndroidLife
     - [RxJava 源码解析(未完成)]()
     - [Glide 源码解析(未完成)]()
 
+- 性能优化
+    - [使用 Looper 检测应用中的 UI 卡顿](https://github.com/shadowwingz/AndroidLife/blob/master/article/use_looper_to_detect_ui/use_looper_to_detect_ui.md)
+
 
 - 细节知识点
     - `setResult` 调用时机
