@@ -482,3 +482,9 @@ public java.util.List<Book> getBookList()
 可以看到，客户端也拿到了服务端返回的数据，服务端返回的数据是在 `_reply` 中，然后我们从 `_reply` 中取出图书列表。到这里，Proxy 的 `getBookList` 方法就返回图书列表了。接着，在 BookManagerActivity 的 `onServiceConnected` 中，`bookManager.getBookList` 也返回了图书列表。
 
 到这里，一次完整的 IPC 过程就分析完了。我们分析的是 `getBookList` 方法，其实 `addBook` 也差不多，这里就不分析了。
+
+### 总结 ###
+
+简单总结下上面的分析，首先，客户端（BookManagerActivity）要跨进程调用服务端（BookManagerService）的 `getBookList` 方法，客户端只有这个方法的接口（IBookManager），并没有方法的实现。方法的实现是由服务端来实现的。
+
+客户端调用 `getBookList` 方法，服务端收到调用后，在自己的 Binder 线程中调用 `getBookList` 方法，并将结果返回。客户端会在主线程收到这个结果。
