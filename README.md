@@ -36,7 +36,7 @@ AndroidLife
     - [setContentView 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/setContentView%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
     - [LayoutParams 解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/LayoutParams%E8%A7%A3%E6%9E%90.md)
     - 四大组件工作过程
-        - Activity 的工作过程
+        - [Activity 的工作过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_activity_start/how_activity_start.md)
         - Service 的工作过程
             - Service 的启动过程
         - BroadcastReceiver 的工作过程
