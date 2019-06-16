@@ -1,5 +1,7 @@
 ![](art/how_activity_start.jpg)
 
+[点击查看大图](https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/article/how_activity_start/art/how_activity_start.jpg)
+
 Activity 可以说是 Android 开发者接触最多的四大组件了，当我们启动一个 Activity 的时候，只需要调用
 
 ```
