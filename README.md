@@ -38,7 +38,8 @@ AndroidLife
     - 四大组件工作过程
         - [Activity 的工作过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_activity_start/how_activity_start.md)
         - Service 的工作过程
-            - Service 的启动过程
+            - [Service 的启动过程(未完成)](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_service_start/how_service_start.md)
+            - Service 的绑定过程
         - BroadcastReceiver 的工作过程
             - 广播的注册过程
             - 广播的发送和接收过程
