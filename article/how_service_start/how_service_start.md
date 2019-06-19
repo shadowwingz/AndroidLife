@@ -1,5 +1,7 @@
 ![](art/how_service_start.jpg)
 
+[点击查看大图](https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/article/how_service_start/art/how_service_start.jpg)
+
 启动一个 Service 很简单，只需要调用
 
 ```java
