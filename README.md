@@ -45,6 +45,7 @@ AndroidLife
             - 广播的发送和接收过程
         - ContentProvider 的工作过程
     - [ListView 源码解析(未完成)](https://github.com/shadowwingz/AndroidLife/blob/master/article/listview/listview.md)
+    - [IntentService 源码解析(未完成)](https://github.com/shadowwingz/AndroidLife/blob/master/article/intentservice/intentservice.md)
 
 - 开源框架源码解析
     - [EventBus 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus.md)
