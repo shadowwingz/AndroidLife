@@ -26,7 +26,11 @@ startService(intent);
 
 我们把 Service 的启动过程和 [Activity 的工作过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_activity_start/how_activity_start.md) 比较一下，就会发现，它俩很像，这说明了虽然 Android 系统源码贼特么复杂，但依然是有迹可寻的。
 
-我们来看 ContextWrapper 的 startService 方法，在 Activity 中调用 startService 走到并不是 Activity 的 startService 方法，而是 ContextWrapper 的 startService 方法：
+#### 目的 ####
+
+看源码要带着目的去看，我们这篇文章，主要分析从调用 `startService` 方法开始，到 Service 的 `onCreate` 方法和 `onStartCommand` 方法被回调，中间经历了怎样的流程。
+
+我们来看 ContextWrapper 的 `startService` 方法，在 Activity 中调用 `startService` 走到并不是 Activity 的 `startService` 方法，而是 ContextWrapper 的 `startService` 方法：
 
 ```java
 ContextWrapper # startService
