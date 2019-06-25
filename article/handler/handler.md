@@ -275,3 +275,167 @@ new Handler() {
 ### 总结： ###
 
 当我们调用 `Handler` 的 `sendMessage` 时，实际上是把消息存储到了 `MessageQueue` 中，`Looper` 会从 `MessageQueue` 中把消息取出来，交给 `Handler` 处理。这就是 Android 的消息机制。
+
+#### Handler、Looper、MessageQueue 分别运行在什么线程，为什么 ####
+
+#### *Looper* ####
+
+我们首先分析 Looper，首先刚刚我们分析过了，Looper 的主要作用就是调用 `loop` 方法，不停的从消息队列 MessageQueue 中取出消息，那么看 Looper 运行在什么线程，就看 `loop` 方法运行在什么线程就可以了，也就是 `Looper.loop()` 方法运行在什么线程。对于 Android 系统来说，它启动的时候会默认在主线程初始化一个 Looper 并启动它，相关代码在 ActivityThread 的 `main` 方法中：
+
+```java
+ActivityThread # main
+
+public static void main(String[] args) {
+    ......
+    // 创建一个关联主线程的 Looper
+    Looper.prepareMainLooper();
+    ......
+    // 启动 Looper
+    Looper.loop();
+}
+```
+
+所以我们可以得出结论：
+
+>Android 系统默认的 Looper 是运行在主线程的，如果是自定义的 Looper，则要看它的 loop 方法在哪个线程被调用。
+
+#### *MessageQueue* ####
+
+接着我们分析 MessageQueue，MessageQueue 的作用是调用 `enqueueMessage` 向消息队列中插入消息，调用 `next` 从消息队列中取出消息，那么看 MessageQueue 运行在什么线程，就看 `enqueueMessage` 方法和 `next` 方法运行在什么线程。
+
+我们向消息队列中投递消息，一般用 sendMessage 或者 post 方法，这两个方法最终都会调用 `queue.enqueueMessage` 方法，而 queue 就是 MessageQueue，所以 enqueueMessage 方法运行在什么线程取决于 Handler 在什么线程发消息（投递任务）。
+
+而 `next` 方法是在 Looper 的 loop 方法中调用的：
+
+```java
+Looper # loop
+
+public static void loop() {
+    ......
+    for (;;) {
+        Message msg = queue.next(); // might block
+        ......
+    }
+}
+```
+
+所以，next 方法运行在什么线程，取决于 Looper 的 loop 方法运行在什么线程。
+
+所以我们可以得出结论：
+
+> enqueueMessage 方法运行在什么线程取决于 Handler 在什么线程发消息
+> next 方法运行在什么线程，取决于 Looper 的 loop 方法运行在什么线程
+
+#### *Handler* ####
+
+终于到了我们最熟悉的 Handler，Handler 的作用是发消息，和在 handleMessage 方法中处理消息。发消息就不说了，我们分析下 handleMessage 方法，handleMessage 方法是在 Handler 的 dispatchMessage 方法中调用的，而 dispatchMessage 方法是在 Looper 的 loop 方法中调用的：
+
+```java
+Looper # loop
+
+public static void loop() {
+    ......
+
+    for (;;) {
+        ......
+
+        msg.target.dispatchMessage(msg);
+
+        ......
+    }
+}
+
+Handler # dispatchMessage
+
+public void dispatchMessage(Message msg) {
+    if (msg.callback != null) {
+        handleCallback(msg);
+    } else {
+        if (mCallback != null) {
+            if (mCallback.handleMessage(msg)) {
+                return;
+            }
+        }
+        // 回调 Handler 的 handleMessage 方法
+        handleMessage(msg);
+    }
+}
+```
+
+所以，handleMessage 方法运行在什么线程，取决于 Looper 的 loop 方法运行在什么线程。
+
+#### 总结 ####
+
+>对于 Android 系统默认初始化的 Looper 和 MessageQueue 来说，Looper 是运行在主线程，MessageQueue 插入消息，要看 Handler 在哪个线程发消息，MessageQueue 取出消息是在主线程。而我们自己 new 出来的 Handler，它的 handleMessage 方法是在主线程。
+
+#### Handler、Looper、MessageQueue 各有几个，为什么 ####
+
+#### *Looper* ####
+
+我们先看 Looper.prepare 方法：
+
+```java
+Looper # prepare
+
+private static void prepare(boolean quitAllowed) {
+    // 重复创建 Looper 会抛异常
+    if (sThreadLocal.get() != null) {
+        throw new RuntimeException("Only one Looper may be created per thread");
+    }
+    sThreadLocal.set(new Looper(quitAllowed));
+}
+```
+
+可以看到，在 prepare 方法中，调用了 sThreadLocal.set 方法，向当前线程中存储了这个 Looper，这说明每个线程都有对应的 Looper，如果想通过重复调用 prepare 方法来创建 Looper 的话，会抛异常，这说明，对于一个线程，系统只允许创建一个 Looper，也就是说，一个线程对应一个 Looper。
+
+#### *MessageQueue* ####
+
+看下 Looper 的构造方法：
+
+```java
+private Looper(boolean quitAllowed) {
+    mQueue = new MessageQueue(quitAllowed);
+    mThread = Thread.currentThread();
+}
+```
+
+可以看到，在 Looper 的构造方法中，创建了一个 MessageQueue，并赋值给了 Looper 的成员变量 `mQueue`，这样就把 Looper 和 MessageQueue 关联起来了，一个 Looper 对应一个 MessageQueue。
+
+#### *Handler* #### 
+
+我们看下 Handler 的构造方法：
+
+```java
+Handler
+
+public Handler(Callback callback, boolean async) {
+    ......
+
+    mLooper = Looper.myLooper();
+    if (mLooper == null) {
+        throw new RuntimeException(
+            "Can't create handler inside thread that has not called Looper.prepare()");
+    }
+    mQueue = mLooper.mQueue;
+    mCallback = callback;
+    mAsynchronous = async;
+}
+
+Looper # myLooper
+
+public static Looper myLooper() {
+    return sThreadLocal.get();
+}
+```
+
+在 Handler 的构造方法中，调用了 Looper.myLooper，Looper 会从 ThreadLocal 中取出当前线程对应的 Looper 赋值给 mLooper，这样 Handler 和 Looper 就关联上了，我们如果在同一个线程多创建几个 Handler，这几个 Handler 都关联的是同一个 Looper。
+
+#### 总结 ####
+
+>同一个线程，只有一个 Looper 和 MessageQueue，但可以有多个 Handler，它们关联的是同一个 Looper 和 MessageQueue。
+
+#### Handler、Looper、MessageQueue 是怎么关联的 ####
+
+Handler 和 Looper 的关联是通过 ThreadLocal 关联的，Handler 创建的时候会从 ThreadLocal 中取出当前线程的 Looper，然后和 Handler 关联。
+
+Looper 和 MessageQueue 的关联是在 Looper 的构造方法中，创建了一个 MessageQueue，然后和 Looper 关联。
