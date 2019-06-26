@@ -1,8 +1,31 @@
+首先大致描述一下 AsyncTask 的工作原理：
+
 AsyncTask 有两个线程池（`SERIAL_EXECUTOR` 和 `THREAD_POOL_EXECUTOR`）和一个 Handler（`InternalHandler`）
     
 - 线程池 `SERIAL_EXECUTOR` 用于任务的排队， 
 - 线程池 `THREAD_POOL_EXECUTOR` 用于真正的执行任务， 
 - `InternalHandler` 用于将执行环境从线程池切换到主线程。
+
+这篇文章分析的是下面代码的执行过程，也就是调用了 AsyncTask 的 execute 方法之后，AsyncTask 内部到底经历了怎样的流程，`onPreExecute`、`doInBackground`、`onPostExecute` 又是什么时候，在什么线程被调用的。
+
+```java
+new AsyncTask<Void, Void, Void>() {
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
+    @Override
+    protected Void doInBackground(Void... params) {
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+    }
+}.execute();
+```
 
 我们来梳理一下执行过程，首先，当我们调用创建 AsyncTask 对象并调用其 execute 方法时，会初始化执行任务所需要的参数，并将任务封装起来，以便线程池执行任务：
 
