@@ -4,7 +4,9 @@ AsyncTask 有两个线程池（`SERIAL_EXECUTOR` 和 `THREAD_POOL_EXECUTOR`）�
     
 - 线程池 `SERIAL_EXECUTOR` 用于任务的排队， 
 - 线程池 `THREAD_POOL_EXECUTOR` 用于真正的执行任务， 
-- `InternalHandler` 用于将执行环境从线程池切换到主线程。
+- `InternalHandler` 是一个关联了主线程 Looper 的 Handler，用于将执行环境从线程池切换到主线程。
+
+我们创建一个 AsyncTask 对象，都会重写它的 doInBackground 方法，doInBackground 方法会被封装成一个 WorkerRunnable 对象，投递到任务队列中，线程池 `SERIAL_EXECUTOR` 会不停的从任务队列中取出任务，然后交给 `THREAD_POOL_EXECUTOR` 线程池去执行。
 
 这篇文章分析的是下面代码的执行过程，也就是调用了 AsyncTask 的 execute 方法之后，AsyncTask 内部到底经历了怎样的流程，`onPreExecute`、`doInBackground`、`onPostExecute` 又是什么时候，在什么线程被调用的。
 
@@ -40,11 +42,12 @@ public AsyncTask() {
 
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             //noinspection unchecked
+            // doInBackground 方法被封装到 WorkerRunnable 类型的对象 mWorker 中
             return postResult(doInBackground(mParams));
         }
     };
 
-    // 再次封装
+    // mWorker 又再次封装被封装到 FutureTask 类型的对象 mFuture 中
     mFuture = new FutureTask<Result>(mWorker) {
         @Override
         protected void done() {
@@ -61,13 +64,20 @@ public AsyncTask() {
         }
     };
 }
+```
 
+可以看到，`doInBackground` 方法被封装到 WorkerRunnable 类型的对象 mWorker 中，mWorker 又再次封装被封装到 FutureTask 类型的对象 mFuture 中，我们可以猜到，最终就是这个 mFuture 对象会被调用。
+
+调用 AsyncTask 的 execute 方法之后，最终会调用 `executeOnExecutor` 方法，`exec.execute(mFuture)`，就开始执行任务了。
+
+```java
 AsyncTask # executeOnExecutor
 
 public final AsyncTask<Params, Progress, Result> executeOnExecutor(Executor exec,
             Params... params) {
     ......
 
+    onPreExecute();
     // 初始化执行任务所需要的参数
     mWorker.mParams = params;
     // 执行任务
@@ -77,7 +87,9 @@ public final AsyncTask<Params, Progress, Result> executeOnExecutor(Executor exec
 }
 ```
 
-调用 `exec.execute(mFuture)`，就开始执行任务了。任务并不是立刻被执行，而是先在 sDefaultExecutor 线程池中排队，然后 sDefaultExecutor 线程池依次取出任务，交给 THREAD_POOL_EXECUTOR 线程池执行。
+首先，onPreExecute 方法会被调用，那么 onPreExecute 方法是被执行在什么线程呢？这个要看 execute 方法是被执行在什么线程，我们一般是在主线程调用 AsyncTask 的 execute 方法，所以 onPreExecute 方法也一般是执行在主线程。
+
+我们继续看，接着会执行 `exec.execute(mFuture)` 方法，mFuture 我们并不陌生，就是被封装起来的任务，也就是 `doInBackground` 方法。而 exec 是 AsyncTask 内部定义的线程池 SerialExecutor，这个线程池内部有一个队列，是专门用来存储任务的，线程池会一般不停的把任务丢到队列中，一般不停地从队列中取出任务执行。具体的执行是交给 THREAD_POOL_EXECUTOR 线程池去执行。
 
 ```java
 AsyncTask # SerialExecutor
@@ -156,7 +168,7 @@ mWorker = new WorkerRunnable<Params, Result>() {
 };
 ```
 
-调用 `r.run()` 会执行 `postResult(doInBackground(mParams))`，doInBackground 方法是由我们开发者实现的，这里无需关注。我们再看 postResult 方法：
+调用 `r.run()` 会执行 `postResult(doInBackground(mParams))`，doInBackground 方法就不说了，我们看下 postResult 方法：
 
 ```java
 AsyncTask # postResult
@@ -214,6 +226,8 @@ private static class InternalHandler extends Handler {
 }
 ```
 
+InternalHandler 是用来切换线程的，我们的任务执行完后，要把执行结果回调到主线程，这时候就要用到 InternalHandler 了。
+
 再看 finish 方法：
 
 ```java
@@ -232,8 +246,8 @@ private void finish(Result result) {
 }
 ```
 
-finish 方法的逻辑很简单，就是拿到任务执行结果，然后回调 onPostExecute 方法，onPostExecute 方法也是开发者实现的。
+finish 方法的逻辑很简单，就是拿到任务执行结果，然后回调 onPostExecute 方法，onPostExecute 方法也是开发者实现的。因为 onPostExecute 方法是在 finish 方法中被调用的，而 finish 方法是在 Handler 中被调用的，所以 onPostExecute 执行在主线程。
 
 ### 总结： ###
 
-最后，总结一下，AsyncTask 会把任务投递给 SERIAL_EXECUTOR，SERIAL_EXECUTOR 会依次取出任务，交给 THREAD_POOL_EXECUTOR 去执行，THREAD_POOL_EXECUTOR 执行完了之后，会通过 InternalHandler 切换到主线程，然后回调 onPostExecute 方法。
+最后，总结一下，AsyncTask 会把任务投递给 SERIAL_EXECUTOR 的队列中，SERIAL_EXECUTOR 会不停从任务队列中取出任务，交给 THREAD_POOL_EXECUTOR 去执行，THREAD_POOL_EXECUTOR 执行完了之后，会通过 InternalHandler 切换到主线程，然后回调 onPostExecute 方法。
