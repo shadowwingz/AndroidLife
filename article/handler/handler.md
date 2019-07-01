@@ -439,3 +439,22 @@ public static Looper myLooper() {
 Handler 和 Looper 的关联是通过 ThreadLocal 关联的，Handler 创建的时候会从 ThreadLocal 中取出当前线程的 Looper，然后和 Handler 关联。
 
 Looper 和 MessageQueue 的关联是在 Looper 的构造方法中，创建了一个 MessageQueue，然后和 Looper 关联。
+
+#### 为什么主线程不会因为 Looper.loop() 里的死循环卡死 ####
+
+应用启动后，会在主线程启动一个默认的 Looper，并调用 Looper.loop() 方法，loop 方法中有一个死循环：
+
+```java
+for (;;) {
+    // 获取消息，如果消息队列已退出，queue.next() 会返回 null
+    Message msg = queue.next(); // might block
+    
+    ......
+
+    msg.target.dispatchMessage(msg);
+
+    ......
+}
+```
+
+这个死循环为什么不会卡死？
