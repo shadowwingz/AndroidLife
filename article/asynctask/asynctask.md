@@ -251,3 +251,39 @@ finish 方法的逻辑很简单，就是拿到任务执行结果，然后回调 
 ### 总结： ###
 
 最后，总结一下，AsyncTask 会把任务投递给 SERIAL_EXECUTOR 的队列中，SERIAL_EXECUTOR 会不停从任务队列中取出任务，交给 THREAD_POOL_EXECUTOR 去执行，THREAD_POOL_EXECUTOR 执行完了之后，会通过 InternalHandler 切换到主线程，然后回调 onPostExecute 方法。
+
+### 问题 ###
+
+#### 如果在两个 Activity 中各 new 一个 AsyncTask，任务会排队执行吗？ ####
+
+会，因为 AsyncTask 中的 `SerialExecutor` 和 `THREAD_POOL_EXECUTOR` 都是 static 的，所以即使 new 了两个 AsyncTask，但是线程池全局只有一个，所以任务会排队执行。
+
+#### AsyncTask 执行的任务个数有限制吗？ ####
+
+可以看 THREAD_POOL_EXECUTOR 的构造：
+
+```java
+public static final Executor THREAD_POOL_EXECUTOR
+    = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE,
+            TimeUnit.SECONDS, sPoolWorkQueue, sThreadFactory);
+```
+
+在 THREAD_POOL_EXECUTOR 的构造方法中有个 sPoolWorkQueue，它的大小就是 AsyncTask 任务的个数限制：
+
+```java
+private static final BlockingQueue<Runnable> sPoolWorkQueue =
+    new LinkedBlockingQueue<Runnable>(128);
+```
+
+也就是 128。
+
+#### AsyncTask 是串行还是并行，怎么实现并行 ####
+
+Android 3.0 以上的AsyncTask 默认是串行执行任务的。
+
+如果要并行，可以调用 executeOnExecutor 方法。
+
+#### AsyncTask 可以自定义线程池吗？ ####
+
+可以，调用 executeOnExecutor，传入自己实现的线程池即可。
+
