@@ -440,6 +440,19 @@ Handler 和 Looper 的关联是通过 ThreadLocal 关联的，Handler 创建的�
 
 Looper 和 MessageQueue 的关联是在 Looper 的构造方法中，创建了一个 MessageQueue，然后和 Looper 关联。
 
+#### Handler 发送的消息可以插队执行吗？ ####
+
+可以，调用 Handler 的 `sendMessageAtFrontOfQueue` 或 `postAtFrontOfQueue` 方法。
+
+#### 主线程的 Handler 怎么发消息到子线程的 Looper ####
+
+- 在子线程中调用 Looper.prepare 创建 Looper，然后调用 Looper.loop 方法启动循环
+- 在主线程中创建 Handler，并在 Handler 的构造方法中传入 Looper 的实例。
+
+#### 如果 Activity 要退出了，但是 MessageQueue 中的消息还没执行完怎么办？ ####
+
+调用 `Handler.removeCallbacksAndMessages(null)` 移除所有消息
+
 #### 为什么主线程不会因为 Looper.loop() 里的死循环卡死 ####
 
 应用启动后，会在主线程启动一个默认的 Looper，并调用 Looper.loop() 方法，loop 方法中有一个死循环：
