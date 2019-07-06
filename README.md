@@ -63,6 +63,7 @@ AndroidLife
 
 - 性能优化
     - [使用 Looper 检测应用中的 UI 卡顿](https://github.com/shadowwingz/AndroidLife/blob/master/article/use_looper_to_detect_ui/use_looper_to_detect_ui.md)
+    - [使用 TraceView 检测应用中的卡顿](https://github.com/shadowwingz/AndroidLife/blob/master/article/trace_view/trace_view.md)
     - [ANR 日志分析](https://github.com/shadowwingz/AndroidLife/blob/master/article/anr_analysis/anr_analysis.md)
 
 
