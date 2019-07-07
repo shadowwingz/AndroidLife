@@ -452,3 +452,13 @@ private Activity performLaunchActivity(ActivityClientRecord r, Intent customInte
 ```
 
 在 `performLaunchActivity` 中，从 ActivityClientRecord 中获取待启动的 Activity 的组件信息，然后创建了 Activity 对象，具体的创建方式是通过 Instrumentation 的 `newActivity` 方法来创建的，接着通过 LoadedApk 的 `makeApplication` 方法来创建 Application 对象，从这里我们发现，原来 Application 的创建过程也隐藏在 Activity 的启动过程中。Application 创建完成后，继续创建 Context 对象。最后调用 `mInstrumentation.callActivityOnCreate` 方法，Activity 的 `onCreate` 方法会被回调。到这里，Activity 的启动过程就完成了。
+
+### 问答 ###
+
+#### Activity 启动过程中涉及到的 Binder ####
+
+![](art/2.jpg)
+
+#### Activity 启动过程中有几次跨进程 ####
+
+2 次，一次是调用 AMS 的 startActivity 方法，这是客户端远程调用服务端，一次是调用 ApplicationThread 的 `scheduleLaunchActivity` 方法，这时服务端远程调用客户端。
