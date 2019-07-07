@@ -48,6 +48,8 @@ AndroidLife
     - [LayoutParams 解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/LayoutParams%E8%A7%A3%E6%9E%90.md)
     - 四大组件工作过程
         - [Activity 的工作过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_activity_start/how_activity_start.md)
+            - [Activity 启动过程中涉及到的 Binder](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_activity_start/how_activity_start.md#activity-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%B6%89%E5%8F%8A%E5%88%B0%E7%9A%84-binder)
+            - [Activity 启动过程中有几次跨进程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_activity_start/how_activity_start.md#activity-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%9C%89%E5%87%A0%E6%AC%A1%E8%B7%A8%E8%BF%9B%E7%A8%8B)
         - Service 的工作过程
             - [Service 的启动过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_service_start/how_service_start.md)
             - [Service 的绑定过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_service_bind/how_service_bind.md)
