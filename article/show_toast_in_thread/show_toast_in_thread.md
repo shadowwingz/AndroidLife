@@ -51,3 +51,33 @@ new Thread(new Runnable() {
 
 运行一下，我们发现，Toast 居然弹出来了。
 
+这说明，子线程是可以弹 Toast 的，那么为什么子线程可以弹 Toast？要回答这个问题，需要对 Android 的消息机制和 Toast 的显示过程有一定的了解，可以先参考 [消息机制源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler/handler.md) 和 [Toast 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/toast/toast.md) 有大概的了解。
+
+首先，我先大概解释下，在 Toast 的内部有一个 Handler，这个 Handler 在创建的时候，会自动关联当前线程的 Looper，也就是刚刚子线程中我们创建的 Looper，当 NMS 调用 Toast 的 `showNextToastLocked` 来显示 Toast 时，客户端会使用 Handler 把 mShow 这个任务投递到 Handler 关联的消息队列中，也就是子线程 Looper 对应的消息队列，在 mShow 中完成了 Toast 的显示，这个显示是调用 WindowManager.addView 方法显示的，和 Activity 更新 UI 是不同的，所以不受子线程限制。
+
+分析到这里，我们也可以解释，为什么在子线程中弹 Toast，需要创建 Looper，因为显示 Toast 是一个任务，也就是 mShow，它会被投递到消息队列中，等待被 Loop 从消息队列中取出并执行，如果没有 Looper，就没人把 mShow 这个任务取出来执行了，Toast 也就无法显示了。
+
+接着，我们从源码的角度解释一下，
+
+===================
+
+我们再回过头，看最开始的报错信息，也就可以理解了。
+
+```
+java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare()
+```
+
+之所以会报这个错，是因为在 Toast 的内部类 TN 内部的 Handler 创建时，会关联当前线程的 Looper，而我们如果没有关联 Looper，就会报错，这个报错信息是 Handler 源码里：
+
+```java
+public Handler(Callback callback, boolean async) {
+    ......
+
+    mLooper = Looper.myLooper();
+    if (mLooper == null) {
+        throw new RuntimeException(
+            "Can't create handler inside thread that has not called Looper.prepare()");
+    }
+    ......
+}
+```
