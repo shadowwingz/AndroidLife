@@ -104,7 +104,7 @@ private static class TN extends ITransientNotification.Stub {
 
 TN 继承了 `ITransientNotification.Stub`，所以 TN 是远程服务真正干活的类，这也告诉我们，弹一个 Toast 并没有我们想象中的那么简单，而是一个 IPC 过程。
 
-TN 是服务端，内部封装了 show 方法和 hide 方法。也就是说，显示和隐藏 Toast 并不是我们决定的，而是服务端，也就是 NMS 决定的。
+TN 是服务端，内部封装了 `show` 方法和 `hide` 方法。也就是说，显示和隐藏 Toast 并不是我们决定的，而是服务端，也就是 NMS 决定的。
 
 接着，调用了 NMS 的 `enqueueToast` 方法，这是一次跨进程调用，客户端远程调用服务端的方法：
 
@@ -173,7 +173,7 @@ public void enqueueToast(String pkg, ITransientNotification callback, int durati
 }
 ```
 
-在 NotificationManagerService 中，有一个 ArrayList，叫 mToastQueue，从命名来看，Toast 应该就是被存储到这个 List 中。
+在 NotificationManagerService 中，有一个 ArrayList，叫 `mToastQueue`，从命名来看，Toast 应该就是被存储到这个 List 中。
 
 在 `enqueueToast` 方法中，主要是封装 Toast 为 ToastRecord，然后把 ToastRecord 添加到 `mToastQueue` 中。
 
@@ -257,7 +257,7 @@ public void handleShow() {
 }
 ```
 
-刚刚我们说了，服务端远程调用客户端的 show 方法，所以 show 方法是运行在 Binder 线程池里的，而显示 Toast 属于一个更新 UI 操作，当然不能在线程池里完成，所以要用 Handler 来切换线程。所以在 TN 的 show 方法中，调用了 `mHandler.post(mShow);`，把 mShow 这个 Runnable 任务投递到 mHandler 所在线程，也就是主线程，关联的消息队列里，这样 mShow 就会在主线程执行了。在 `mShow` 中，调用了 `handleShow` 方法，在这个方法中，调用了 WindowManager 的 addView 方法，把 Toast 显示了出来。
+刚刚我们说了，服务端远程调用客户端的 show 方法，所以 show 方法是运行在 Binder 线程池里的，而显示 Toast 属于一个更新 UI 操作，当然不能在线程池里完成，所以要用 Handler 来切换线程。所以在 TN 的 show 方法中，调用了 `mHandler.post(mShow);`，把 mShow 这个 Runnable 任务投递到 mHandler 所在线程，也就是主线程关联的消息队列里，这样 mShow 就会在主线程执行了。在 `mShow` 中，调用了 `handleShow` 方法，在这个方法中，调用了 WindowManager 的 addView 方法，把 Toast 显示了出来。
 
 Toast 显示出来之后，过段时间就要消失，我们再来看下让 Toast 消失的代码，也就是 `scheduleTimeoutLocked` 方法：
 
@@ -410,14 +410,24 @@ void showNextToastLocked() {
 
 在 `showNextToastLocked` 方法中，会从 mToastQueue 队列中取出第一个 Toast，然后调用 `record.callback.show()` 来显示，再调用 `scheduleTimeoutLocked(record)` 来延迟隐藏 Toast。最后调用 `mToastQueue.remove(index)` 从队列中移除 Toast。
 
-### 总结 ###
 
 
+#### Toast 有个数限制吗？
 
-为什么 Toast 要先和 NMS（NotificationManagerService）跨进程通信，让 NMS 调用 TN 的 show 方法。为什么不直接让 Toast 调用 show 方法。
+有，对于非系统应用，每个应用弹的 Toast 不能超过 50 个，否则 Toast 会被丢弃。
 
-猜想：Toast 是一个全局的行为，不依赖于某个应用，也不依赖于某个 Activity，所以 Toast 的显示应该由系统来完成，而且 Toast 的源码也说明了这一点，mToastQueue 中最多能存在 50 个 Toast，只要是非系统应用，大家一起共用这 50 个 Toast，从这个角度看，Toast 也应该是由系统（NMS）来调用。
+#### Toast 可以自定义时长吗？
 
-对于非系统应用，每个应用在这个 mToastQueue 中存储的 Toast 不能超过 50 个，否则 Toast 会被丢弃。
+不可以，虽然在 Toast 的 `makeText` 方法中，第三个参数让我们传入 Toast 要显示的时长，但是时长其实只有内置的 `Toast.LENGTH_SHORT` 和 `LENGTH_LONG` 可以选，即使传入自定义的时长，在源码中也会被转换成内置的时长。具体可以查看 `NMS` 的 `scheduleTimeoutLocked` 方法：
 
-因为 Toast 并不是直接存储到 mToastQueue 中的，而是会被封装到 ToastRecord 中，再存储到 mToastQueue 中，而 ToastRecord 中封装了 Toast 和对应的应用包名。当添加一个 Toast 到 mToastQueue 中时，
+```java
+private void scheduleTimeoutLocked(ToastRecord r)
+{
+    mHandler.removeCallbacksAndMessages(r);
+    Message m = Message.obtain(mHandler, MESSAGE_TIMEOUT, r);
+    long delay = r.duration == Toast.LENGTH_LONG ? LONG_DELAY : SHORT_DELAY;
+    mHandler.sendMessageDelayed(m, delay);
+}
+```
+
+在 `scheduleTimeoutLocked` 方法中，会判断 `r.duration` 是不是等于 `Toast.LENGTH_LONG`，`r.duration` 就是我们传入 Toast 的时长，如果我们传入的时长是 `Toast.LENGTH_LONG`，那么 Toast 显示的时长就是 `LONG_DELAY`，也就是 3.5 秒，如果我们传入的时长不是 `Toast.LENGTH_LONG`，而是传入了 `Toast.LENGTH_SHORT`，或者自定义的时长，那么 Toast 显示的时长就是 `SHORT_DELAY`，也就是 2 秒。
