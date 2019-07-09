@@ -410,7 +410,9 @@ void showNextToastLocked() {
 
 在 `showNextToastLocked` 方法中，会从 mToastQueue 队列中取出第一个 Toast，然后调用 `record.callback.show()` 来显示，再调用 `scheduleTimeoutLocked(record)` 来延迟隐藏 Toast。最后调用 `mToastQueue.remove(index)` 从队列中移除 Toast。
 
+#### Toast 显示过程涉及到的 Binder ####
 
+![](art/1.jpg)
 
 #### Toast 有个数限制吗？
 
