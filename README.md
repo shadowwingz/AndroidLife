@@ -9,6 +9,7 @@ AndroidLife
 	- [AIDL 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/AIDL%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
 	- [Binder 的使用及上层原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/Binder%20%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E4%B8%8A%E5%B1%82%E5%8E%9F%E7%90%86.md)
 	- [Toast 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/toast/toast.md)
+    	- [Toast 显示过程涉及到的 Binder](https://github.com/shadowwingz/AndroidLife/blob/master/article/toast/toast.md#toast-%E6%98%BE%E7%A4%BA%E8%BF%87%E7%A8%8B%E6%B6%89%E5%8F%8A%E5%88%B0%E7%9A%84-binder)
 		- [Toast 有个数限制吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/toast/toast.md#toast-%E6%9C%89%E4%B8%AA%E6%95%B0%E9%99%90%E5%88%B6%E5%90%97)
 		- [Toast 可以自定义时长吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/toast/toast.md#toast-%E5%8F%AF%E4%BB%A5%E8%87%AA%E5%AE%9A%E4%B9%89%E6%97%B6%E9%95%BF%E5%90%97)
 	    - [子线程可以弹 Toast 吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/show_toast_in_thread/show_toast_in_thread.md)
