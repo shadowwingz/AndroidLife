@@ -340,3 +340,9 @@ private void handleServiceArgs(ServiceArgsData data) {
 在 `handleServiceArgs` 中，回调了 Service 的 `onStartCommand` 方法。
 
 到这里 Service 的启动过程就分析完了。
+
+#### Service 启动过程中涉及到的 Binder ####
+
+Service 启动过程中涉及到的 Binder 和 Activity 是一样的：
+
+![](art/2.jpg)
