@@ -84,6 +84,11 @@ AndroidLife
     - [ANR 日志分析](https://github.com/shadowwingz/AndroidLife/blob/master/article/anr_analysis/anr_analysis.md)
     - [Android 绘制性能分析（未完成）]()
     - [LeakCanary 使用详解（未完成）]()
+    - [内存泄漏的检查与分析](https://github.com/shadowwingz/AndroidLife/blob/master/article/memory_leak/memory_leak.md)
+        - [什么是内存泄漏？](https://github.com/shadowwingz/AndroidLife/blob/master/article/memory_leak/memory_leak.md#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
+        - [内存泄漏的危害](https://github.com/shadowwingz/AndroidLife/blob/master/article/memory_leak/memory_leak.md#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E7%9A%84%E5%8D%B1%E5%AE%B3) 
+        - [怎么判断对象可以回收](https://github.com/shadowwingz/AndroidLife/blob/master/article/memory_leak/memory_leak.md#%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E5%AF%B9%E8%B1%A1%E5%8F%AF%E4%BB%A5%E5%9B%9E%E6%94%B6)
+        - [怎么发现内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/article/memory_leak/memory_leak.md#%E6%80%8E%E4%B9%88%E5%8F%91%E7%8E%B0%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
 
 
 - 细节知识点
