@@ -238,3 +238,58 @@ Activity 被回收 true
 可以看到，Activity 对象大概 5 秒钟之后，就被回收了。
 
 这样，我们就实现了代码检测 Activity 内存泄漏。
+
+#### 避免内存泄漏的 Handler 写法
+
+为了避免内存泄漏，首先，Handler 应该用静态内部类，这样就不会隐式持有 Activity 的引用了，但是用静态内部类之后，Handler 内部就没法调用 Activity 对象的非静态方法了，这时可以在 Handler 内部用一个弱引用来持有 Activity 的实例，用弱引用持有 Activity，即使 Handler 还被未执行的 Message 持有，也不影响 Activity 的回收。
+
+然后，在 Activity 的 onDestroy 回调里，调用 `removeCallbacksAndMessages` 方法移除 Handler 发送的所有消息和 callback，因为 Activity 已经退出了，Handler 发送的消息就没必要再执行了。最后，把 Handler 置为 null。
+
+代码如下：
+
+```java
+public class MemoryLeakActivity extends AppCompatActivity {
+    private MainHandler mHandler;
+
+    static class MainHandler extends Handler {
+
+        private final WeakReference<Activity> mRef;
+
+        private MainHandler(Activity activity) {
+            this.mRef = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            MemoryLeakActivity activity = (MemoryLeakActivity) mRef.get();
+            activity.updateUI();
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_memory_leak);
+        mHandler = new MainHandler(this);
+        // 延时 3 分钟的消息
+        mHandler.sendEmptyMessageDelayed(0, 3 * 60 * 1000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mHandler != null) {
+            // 清除 MainHandler 发送的所有消息和 callback
+            mHandler.removeCallbacksAndMessages(null);
+            mHandler = null;
+        }
+    }
+
+    /**
+     * 更新 UI
+     */
+    private void updateUI() {
+
+    }
+}
+```
