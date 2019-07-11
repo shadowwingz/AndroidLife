@@ -24,6 +24,14 @@ AndroidLife
 	    - [Handler 发送的消息可以插队执行吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler/handler.md#handler-%E5%8F%91%E9%80%81%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E4%BB%A5%E6%8F%92%E9%98%9F%E6%89%A7%E8%A1%8C%E5%90%97)
 	    - [主线程的 Handler 怎么发消息到子线程的 Looper](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler/handler.md#%E4%B8%BB%E7%BA%BF%E7%A8%8B%E7%9A%84-handler-%E6%80%8E%E4%B9%88%E5%8F%91%E6%B6%88%E6%81%AF%E5%88%B0%E5%AD%90%E7%BA%BF%E7%A8%8B%E7%9A%84-looper)
 	    - [如果 Activity 要退出了，但是 MessageQueue 中的消息还没执行完怎么办？](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler/handler.md#%E5%A6%82%E6%9E%9C-activity-%E8%A6%81%E9%80%80%E5%87%BA%E4%BA%86%E4%BD%86%E6%98%AF-messagequeue-%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E8%BF%98%E6%B2%A1%E6%89%A7%E8%A1%8C%E5%AE%8C%E6%80%8E%E4%B9%88%E5%8A%9E)
+	    - 消息队列怎么退出？各有什么区别？
+	    - 消息队列退出后，还可以用 Handler 发消息吗？
+	    - 消息队列退出后，消息队列里的消息还会执行吗？
+	    - [Hanlder 使用不当导致内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler_memory_leak/handler_memory_leak.md#hanlder-%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%BD%93%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
+	    - [Handler 是怎么造成内存泄漏的](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler_memory_leak/handler_memory_leak.md#handler-%E6%98%AF%E6%80%8E%E4%B9%88%E9%80%A0%E6%88%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E7%9A%84)
+	    - [为什么 Handler 发送的延时消息没有执行，会导致内存泄漏？](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler_memory_leak/handler_memory_leak.md#%E4%B8%BA%E4%BB%80%E4%B9%88-handler-%E5%8F%91%E9%80%81%E7%9A%84%E5%BB%B6%E6%97%B6%E6%B6%88%E6%81%AF%E6%B2%A1%E6%9C%89%E6%89%A7%E8%A1%8C%E4%BC%9A%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
+	    - [怎么用代码检测内存泄漏？](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler_memory_leak/handler_memory_leak.md#%E6%80%8E%E4%B9%88%E7%94%A8%E4%BB%A3%E7%A0%81%E6%A3%80%E6%B5%8B%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
+	    - 避免内存泄漏的 Handler 写法
 	    - [Android中为什么主线程不会因为 Looper.loop() 里的死循环卡死？（未完成）]()
 	- [AsyncTask 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/asynctask/asynctask.md)
 	    - [如果在两个 Activity 中各 new 一个 AsyncTask，任务会排队执行吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/asynctask/asynctask.md#%E5%A6%82%E6%9E%9C%E5%9C%A8%E4%B8%A4%E4%B8%AA-activity-%E4%B8%AD%E5%90%84-new-%E4%B8%80%E4%B8%AA-asynctask%E4%BB%BB%E5%8A%A1%E4%BC%9A%E6%8E%92%E9%98%9F%E6%89%A7%E8%A1%8C%E5%90%97)
