@@ -453,6 +453,79 @@ Looper 和 MessageQueue 的关联是在 Looper 的构造方法中，创建了一
 
 调用 `Handler.removeCallbacksAndMessages(null)` 移除所有消息
 
+#### 消息队列退出后，还可以用 Handler 发消息吗？
+
+可以，但消息不会被执行。
+
+当消息队列退出后，我们再调用 sendMessage 方法来发送消息，最终会走到 MessageQueue 的 `enqueueMessage` 方法中
+
+```java
+boolean enqueueMessage(Message msg, long when) {
+    ......
+    synchronized (this) {
+        if (mQuitting) {
+            IllegalStateException e = new IllegalStateException(
+                    msg.target + " sending message to a Handler on a dead thread");
+            Log.w(TAG, e.getMessage(), e);
+            msg.recycle();
+            return false;
+        }
+        ......
+    }
+    return true;
+}
+```
+
+因为消息队列已经退出，所以 `mQuitting` 变量为 `true`，接着会把 Handler 发送的消息调用 `msg.recycle` 方法回收，同时 `enqueueMessage` 方法会返回 `false`，最终我们的 sendMessage 方法的返回值也是 `false`。
+
+#### 消息队列退出后，消息队列里的消息还会执行吗？
+
+要看消息的 when 字段，如果 when 字段小于当前时间，就会执行。
+
+我们知道，在 Looper 的 loop 方法中，会不停的调用 next 方法获取消息，我们看下 next 方法。
+
+在 next 方法中，先判断了 when 字段，是否小于等于当前时间，如果是，就返回消息给 loop 方法来处理，就不会执行后面的代码了。
+
+在后面的代码中，判断了 `mQuitting` 是否为 null，如果为 null，就返回 null，loop 方法的 for 循环也就退出了。
+
+```java
+Message next() {
+    ......
+    for (;;) {
+        ......
+        synchronized (this) {
+            ......
+            if (msg != null) {
+                if (now < msg.when) {
+                    // Next message is not ready.  Set a timeout to wake up when it is ready.
+                    nextPollTimeoutMillis = (int) Math.min(msg.when - now, Integer.MAX_VALUE);
+                } else { // 如果 now >= msg.when，就进入 else 语句
+                    ......
+                    // 返回消息给 loop 方法处理，就不会执行后面的代码了
+                    return msg;
+                }
+            } else {
+                // No more messages.
+                nextPollTimeoutMillis = -1;
+            }
+
+            // Process the quit message now that all pending messages have been handled.
+            // 如果消息队列已经退出，就返回 null
+            // 如果 now >= msg.when，代码就不会执行到这里了，
+            // 所以消息队列的退出，对 now >= msg.when 这种情况没有影响
+            if (mQuitting) {
+                dispose();
+                return null;
+            }
+
+            ......
+        }
+
+        ......
+    }
+}
+```
+
 #### 为什么主线程不会因为 Looper.loop() 里的死循环卡死 ####
 
 应用启动后，会在主线程启动一个默认的 Looper，并调用 Looper.loop() 方法，loop 方法中有一个死循环：
