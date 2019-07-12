@@ -102,6 +102,8 @@ AndroidLife
             - [怎样避免 Handler 延时消息内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler_memory_leak/handler_memory_leak.md#%E9%81%BF%E5%85%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E7%9A%84-handler-%E5%86%99%E6%B3%95)
         - [不正确使用单例模式造成的内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/article/singleton_memory_leak/singleton_memory_leak.md)
             - [怎样避免单例模式内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/article/singleton_memory_leak/singleton_memory_leak.md#%E6%80%8E%E6%A0%B7%E9%81%BF%E5%85%8D%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
+        - [多线程造成的内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/article/thread_memory_leak/thread_memory_leak.md)
+        	  - [怎样避免多线程引起的内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/article/thread_memory_leak/thread_memory_leak.md#%E9%81%BF%E5%85%8D%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%95%E8%B5%B7%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
         - [源码](https://github.com/shadowwingz/AndroidLifeDemo/tree/master/AndroidLifeDemo/app/src/main/java/com/shadowwingz/androidlifedemo/memoryleakdemo)
 
 
