@@ -70,7 +70,7 @@ AndroidLife
     	        - [Service 启动过程中涉及到的 Binder](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_service_start/how_service_start.md#service-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%B6%89%E5%8F%8A%E5%88%B0%E7%9A%84-binder)
 	        - [Service 的绑定过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_service_bind/how_service_bind.md)
 	    - BroadcastReceiver 的工作过程
-	        - 广播的注册过程
+	        - [广播的注册过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_broadcast_register/how_broadcast_register.md)
 	        - 广播的发送和接收过程
 	    - ContentProvider 的工作过程
 	- [ListView 源码解析(未完成)](https://github.com/shadowwingz/AndroidLife/blob/master/article/listview/listview.md)
