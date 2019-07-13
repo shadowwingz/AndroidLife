@@ -1,0 +1,352 @@
+这篇文章主要分析普通广播（Normal Broadcast）的发送过程，也就是从 `sendBroadcast` 方法开始，到 BroadcastReceiver 的 onReceive 方法被回调的流程，和 Activity、Service 的工作过程一样，广播的发送也是一个跨进程的过程，具体来说，是客户端，也就是我们的 App，远程调用 AMS，AMS 再远程调用我们客户端。也就是两次跨进程。
+
+首先，发送普通广播，调用的是 ContextWrapper 的 `sendBroadcast` 方法，ConextWrapper 内部又调用了 ContextImpl 的 `sendBroadcast` 方法：
+
+```java
+@Override
+public void sendBroadcast(Intent intent) {
+    warnIfCallingFromSystemProcess();
+    String resolvedType = intent.resolveTypeIfNeeded(getContentResolver());
+    try {
+        intent.prepareToLeaveProcess();
+        ActivityManagerNative.getDefault().broadcastIntent(
+            mMainThread.getApplicationThread(), intent, resolvedType, null,
+            Activity.RESULT_OK, null, null, null, AppOpsManager.OP_NONE, false, false,
+            getUserId());
+    } catch (RemoteException e) {
+    }
+}
+```
+
+在 ContextImpl 的 sendBroadcast 方法中，调用了 AMS 的 broadcastIntent 方法，这是一次跨进程调用，代码就从我们客户端执行到了 System Server 服务端，我们看下 AMS 的 broadcastIntent 方法：
+
+```java
+ActivityManagerService # broadcastIntent
+
+public final int broadcastIntent(IApplicationThread caller,
+            Intent intent, String resolvedType, IIntentReceiver resultTo,
+            int resultCode, String resultData, Bundle map,
+            String requiredPermission, int appOp, boolean serialized, boolean sticky, int userId) {
+    ......
+    synchronized(this) {
+        ......
+        int res = broadcastIntentLocked(callerApp,
+                callerApp != null ? callerApp.info.packageName : null,
+                intent, resolvedType, resultTo,
+                resultCode, resultData, map, requiredPermission, appOp, serialized, sticky,
+                callingPid, callingUid, userId);
+        Binder.restoreCallingIdentity(origId);
+        return res;
+    }
+}
+```
+
+在 AMS 的 broadcastIntent 方法中，调用了 broadcastIntentLocked 方法：
+
+```java
+ActivityManagerService # broadcastIntentLocked
+
+private final int broadcastIntentLocked(ProcessRecord callerApp,
+            String callerPackage, Intent intent, String resolvedType,
+            IIntentReceiver resultTo, int resultCode, String resultData,
+            Bundle map, String requiredPermission, int appOp,
+            boolean ordered, boolean sticky, int callingPid, int callingUid,
+            int userId) {
+    intent = new Intent(intent);
+
+    // By default broadcasts do not go to stopped apps.
+    intent.addFlags(Intent.FLAG_EXCLUDE_STOPPED_PACKAGES);
+
+    ......
+
+    if ((receivers != null && receivers.size() > 0)
+            || resultTo != null) {
+        BroadcastQueue queue = broadcastQueueForIntent(intent);
+        BroadcastRecord r = new BroadcastRecord(queue, intent, callerApp,
+                callerPackage, callingPid, callingUid, resolvedType,
+                requiredPermission, appOp, receivers, resultTo, resultCode,
+                resultData, map, ordered, sticky, false, userId);
+        ......
+        boolean replaced = replacePending && queue.replaceOrderedBroadcastLocked(r); 
+        if (!replaced) {
+            queue.enqueueOrderedBroadcastLocked(r);
+            queue.scheduleBroadcastsLocked();
+        }
+    }
+
+    return ActivityManager.BROADCAST_SUCCESS;
+}
+```
+
+首先，intent 会被加上一个标记位，`Intent.FLAG_EXCLUDE_STOPPED_PACKAGES`，有了这个标记位，广播就不会发送给已经停止的应用，在 Android 看来，已经停止的应用就应该老老实实待在后台休息，没必要收到广播。
+
+然后，根据 intent-filter 查到匹配的广播接受者，将满足条件的广播接受者添加到 BroadcastQueue 中，然后调用 scheduleBroadcastsLocked 方法来把广播发送给相应的广播接受者。
+
+我们看下 BroadcastQueue 的 scheduleBroadcastsLocked 方法：
+
+```java
+public void scheduleBroadcastsLocked() {
+    if (DEBUG_BROADCAST) Slog.v(TAG, "Schedule broadcasts ["
+            + mQueueName + "]: current="
+            + mBroadcastsScheduled);
+
+    if (mBroadcastsScheduled) {
+        return;
+    }
+    mHandler.sendMessage(mHandler.obtainMessage(BROADCAST_INTENT_MSG, this));
+    mBroadcastsScheduled = true;
+}
+```
+
+在 scheduleBroadcastsLocked 方法中，只是调用了 Handler 来发送一个了 BROADCAST_INTENT_MSG 消息。
+
+```java
+@Override
+public void handleMessage(Message msg) {
+    switch (msg.what) {
+        case BROADCAST_INTENT_MSG: {
+            if (DEBUG_BROADCAST) Slog.v(
+                    TAG, "Received BROADCAST_INTENT_MSG");
+            processNextBroadcast(true);
+        } break;
+        case BROADCAST_TIMEOUT_MSG: {
+            synchronized (mService) {
+                broadcastTimeoutLocked(true);
+            }
+        } break;
+    }
+}
+```
+
+我们来看看这个消息，在 BROADCAST_INTENT_MSG 消息中，调用了 processNextBroadcast 方法来发送广播，
+
+```java
+final void processNextBroadcast(boolean fromMsg) {
+    synchronized(mService) {
+        ......
+
+        // First, deliver any non-serialized broadcasts right away.
+        while (mParallelBroadcasts.size() > 0) {
+            ......
+            for (int i=0; i<N; i++) {
+                ......
+                deliverToRegisteredReceiverLocked(r, (BroadcastFilter)target, false);
+            }
+            addBroadcastToHistoryLocked(r);
+            ......
+        }
+     }
+     ......
+}
+```
+
+processNextBroadcast 的方法很长，我们只关注重点，也就是广播的发送，也就是 deliverToRegisteredReceiverLocked 方法
+
+```java
+private final void deliverToRegisteredReceiverLocked(BroadcastRecord r,
+            BroadcastFilter filter, boolean ordered) {
+    ......
+
+    if (!skip) {
+        ......
+        try {
+            ......
+            performReceiveLocked(filter.receiverList.app, filter.receiverList.receiver,
+                new Intent(r.intent), r.resultCode, r.resultData,
+                r.resultExtras, r.ordered, r.initialSticky, r.userId);
+            ......
+        } catch (RemoteException e) {
+            ......
+        }
+    }
+}
+```
+
+这个方法中又调用了 performReceiveLocked 方法，performReceiveLocked 方法中又调用了 performReceiveLocked 方法。
+
+```java
+private static void performReceiveLocked(ProcessRecord app, IIntentReceiver receiver,
+            Intent intent, int resultCode, String data, Bundle extras,
+            boolean ordered, boolean sticky, int sendingUser) throws RemoteException {
+    // Send the intent to the receiver asynchronously using one-way binder calls.
+    if (app != null) {
+        if (app.thread != null) {
+            // If we have an app thread, do the call through that so it is
+            // correctly ordered with other one-way calls.
+            app.thread.scheduleRegisteredReceiver(receiver, intent, resultCode,
+                    data, extras, ordered, sticky, sendingUser, app.repProcState);
+        } else {
+            // Application has died. Receiver doesn't exist.
+            throw new RemoteException("app.thread must not be null");
+        }
+    } else {
+        receiver.performReceive(intent, resultCode, data, extras, ordered,
+                sticky, sendingUser);
+    }
+}
+```
+
+经过一系列的跳转，我们终于看到了熟悉的对象，app.thread，它的类型是 IApplicationThread，是客户端在服务端的 Binder，实现类是 ApplicationThread，在 performReceiveLocked 方法中，调用了 `app.thread.scheduleRegisteredReceiver` 方法，这是服务端远程调用客户端，我们看下 ApplicationThread 中的实现：
+
+```java
+ActivityThread.ApplicationThread # scheduleRegisteredReceiver
+
+public void scheduleRegisteredReceiver(IIntentReceiver receiver, Intent intent,
+                int resultCode, String dataStr, Bundle extras, boolean ordered,
+                boolean sticky, int sendingUser, int processState) throws RemoteException {
+    updateProcessState(processState, false);
+    receiver.performReceive(intent, resultCode, dataStr, extras, ordered,
+            sticky, sendingUser);
+}
+```
+
+scheduleRegisteredReceiver 方法此时运行在客户端的 Binder 线程池中，在 scheduleRegisteredReceiver 方法中，调用了 receiver 的 performReceive 方法，receiver 是 IIntentReceiver 类型，实现类是 InnerReceiver，在广播的注册过程中我们讲过了，InnerReceiver 是用来帮助广播跨进程的，怎么帮呢？答案就是调用 InnerReceiver 的 performReceive 方法。
+
+```java
+static final class ReceiverDispatcher {
+
+    final static class InnerReceiver extends IIntentReceiver.Stub {
+    	// 持有了外部类 ReceiverDispatcher 的引用
+        final WeakReference<LoadedApk.ReceiverDispatcher> mDispatcher;
+        final LoadedApk.ReceiverDispatcher mStrongRef;
+
+        InnerReceiver(LoadedApk.ReceiverDispatcher rd, boolean strong) {
+            mDispatcher = new WeakReference<LoadedApk.ReceiverDispatcher>(rd);
+            mStrongRef = strong ? rd : null;
+        }
+        public void performReceive(Intent intent, int resultCode, String data,
+                Bundle extras, boolean ordered, boolean sticky, int sendingUser) {
+            LoadedApk.ReceiverDispatcher rd = mDispatcher.get();
+            ......
+            if (rd != null) {
+        		// 调用外部类 ReceiverDispatcher 的 performReceive 方法
+                rd.performReceive(intent, resultCode, data, extras,
+                        ordered, sticky, sendingUser);
+            } else {
+                ......
+            }
+        }
+    }
+
+    final IIntentReceiver.Stub mIIntentReceiver; // BroadcastReceiver 对应的 IIntentReceiver.Stub，帮助跨进程
+    final BroadcastReceiver mReceiver;
+    final Context mContext;
+    final Handler mActivityThread; // ActivityThread 中的 H Handler
+    final Instrumentation mInstrumentation;
+    final boolean mRegistered;
+    final IntentReceiverLeaked mLocation;
+    RuntimeException mUnregisterLocation;
+    boolean mForgotten;
+
+    final class Args extends BroadcastReceiver.PendingResult implements Runnable {
+        private Intent mCurIntent;
+        private final boolean mOrdered;
+
+        public Args(Intent intent, int resultCode, String resultData, Bundle resultExtras,
+                boolean ordered, boolean sticky, int sendingUser) {
+            super(resultCode, resultData, resultExtras,
+                    mRegistered ? TYPE_REGISTERED : TYPE_UNREGISTERED,
+                    ordered, sticky, mIIntentReceiver.asBinder(), sendingUser);
+            mCurIntent = intent;
+            mOrdered = ordered;
+        }
+        
+        // run 方法会在主线程中被执行
+        public void run() {
+            final BroadcastReceiver receiver = mReceiver;
+            final boolean ordered = mOrdered;
+            
+            if (ActivityThread.DEBUG_BROADCAST) {
+                int seq = mCurIntent.getIntExtra("seq", -1);
+                Slog.i(ActivityThread.TAG, "Dispatching broadcast " + mCurIntent.getAction()
+                        + " seq=" + seq + " to " + mReceiver);
+                Slog.i(ActivityThread.TAG, "  mRegistered=" + mRegistered
+                        + " mOrderedHint=" + ordered);
+            }
+            
+            final IActivityManager mgr = ActivityManagerNative.getDefault();
+            final Intent intent = mCurIntent;
+            mCurIntent = null;
+            
+            ......
+
+            Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, "broadcastReceiveReg");
+            try {
+                ClassLoader cl =  mReceiver.getClass().getClassLoader();
+                intent.setExtrasClassLoader(cl);
+                setExtrasClassLoader(cl);
+                receiver.setPendingResult(this);
+                // 回调 BroadcastReceiver 的 onReceive 方法，所以 onReceive 方法是执行在主线程的
+                receiver.onReceive(mContext, intent);
+            } catch (Exception e) {
+                if (mRegistered && ordered) {
+                    if (ActivityThread.DEBUG_BROADCAST) Slog.i(ActivityThread.TAG,
+                            "Finishing failed broadcast to " + mReceiver);
+                    sendFinished(mgr);
+                }
+                if (mInstrumentation == null ||
+                        !mInstrumentation.onException(mReceiver, e)) {
+                    Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);
+                    throw new RuntimeException(
+                        "Error receiving broadcast " + intent
+                        + " in " + mReceiver, e);
+                }
+            }
+            
+            if (receiver.getPendingResult() != null) {
+                finish();
+            }
+            Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);
+        }
+    }
+
+	// 构造方法中传入了 BroadcastReceiver
+    ReceiverDispatcher(BroadcastReceiver receiver, Context context,
+            Handler activityThread, Instrumentation instrumentation,
+            boolean registered) {
+        if (activityThread == null) {
+            throw new NullPointerException("Handler must not be null");
+        }
+
+		// 构造方法中会创建对应的 InnerReceiver
+        mIIntentReceiver = new InnerReceiver(this, !registered);
+        mReceiver = receiver;
+        mContext = context;
+        mActivityThread = activityThread;
+        mInstrumentation = instrumentation;
+        mRegistered = registered;
+        mLocation = new IntentReceiverLeaked(null);
+        mLocation.fillInStackTrace();
+    }
+
+    ......
+
+    ......
+
+    public void performReceive(Intent intent, int resultCode, String data,
+            Bundle extras, boolean ordered, boolean sticky, int sendingUser) {
+        ......
+        // 创建任务，这个任务就是通知广播接受者，也就是回调它们的 onReceive 方法
+        Args args = new Args(intent, resultCode, data, extras, ordered,
+                sticky, sendingUser);
+        // 调用 post 方法，将 arge 这个 Runnable 任务投递到 Handler 关联的消息队列中
+        if (!mActivityThread.post(args)) {
+            if (mRegistered && ordered) {
+                IActivityManager mgr = ActivityManagerNative.getDefault();
+                if (ActivityThread.DEBUG_BROADCAST) Slog.i(ActivityThread.TAG,
+                        "Finishing sync broadcast to " + mReceiver);
+                args.sendFinished(mgr);
+            }
+        }
+    }
+
+}
+```
+
+首先，InnerReceiver 是 ReceiverDispatcher 的内部类，而 InnerReceiver 又持有了外部类 ReceiverDispatcher 的引用，而 ReceiverDispatcher 中又持有 InnerReceiver 对应的 BroadcastReceiver 的引用，当我们调用 InnerReceiver 的 performReceive 方法，在它内部会调用外部类 ReceiverDispatcher 的 performReceive 方法，而外部类又持有 BroadcastReceiver 的引用，所以外部类可以调用 BroadcastReceiver 的 onReceive 方法，这样，广播接收者就收到广播了。
+
+当然，这里只是大概描述了流程，真正实现让广播接收者收到广播，是用主线程的 Handler 来帮忙实现的，这个 Handler 就是 ActivityThread 中的 Handler，Activity 和 Service 的启动也是用到了这个 Handler。
+
+回调 BroadcastReceiver 的 onReceive 方法这个任务，被封装到了 Args 这个 Runnable 中，接着，使用 `mActivityThread.post(args)` 方法把这个 Runnable 任务丢到了 Handler 关联的消息队列中，也就是主线程的消息队列中。那么 BroadcastReceiver 的 onReceive 方法就在主线程被回调。
+
+我们再简单总结一下，服务端，也就是 AMS 调用了 InnerReceiver 的 performReceive 方法，此时代码执行到了客户端的 Binder 线程池中，InnerReceiver 又调用了外部类 ReceiverDispatcher 的 performReceive 方法，在 ReceiverDispatcher 的 performReceive 方法中，把回调 BroadcastReceiver 的 onReceive 方法这个任务，给丢到主线程的消息队列了，这样，即使 BroadcastReceiver 无法跨进程，AMS 无法直接远程调用 BroadcastReceiver 的 onReceive 方法，但是通过 InnerReceiver，AMS 成功的调用了 BroadcastReceiver 的 onReceive 方法。
