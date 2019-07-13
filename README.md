@@ -72,6 +72,7 @@ AndroidLife
 	    - BroadcastReceiver 的工作过程
 	        - [广播的注册过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_broadcast_register/how_broadcast_register.md)
 	        - 广播的发送和接收过程
+	        	- [普通广播的发送和接收过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_normal_broadcast_send/how_normal_broadcast_send.md)
 	    - ContentProvider 的工作过程
 	- [ListView 源码解析(未完成)](https://github.com/shadowwingz/AndroidLife/blob/master/article/listview/listview.md)
 	- [IntentService 源码解析(未完成)](https://github.com/shadowwingz/AndroidLife/blob/master/article/intentservice/intentservice.md)
