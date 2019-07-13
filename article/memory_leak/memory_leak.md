@@ -37,4 +37,5 @@
 
 3. 使用代码检测 Activity 泄漏
 
-在 Application 里，监听 Activity 的生命周期回调，
+[怎么用代码检测内存泄漏？](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler_memory_leak/handler_memory_leak.md#%E6%80%8E%E4%B9%88%E7%94%A8%E4%BB%A3%E7%A0%81%E6%A3%80%E6%B5%8B%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
+
