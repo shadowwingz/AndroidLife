@@ -39,3 +39,31 @@
 
 [怎么用代码检测内存泄漏？](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler_memory_leak/handler_memory_leak.md#%E6%80%8E%E4%B9%88%E7%94%A8%E4%BB%A3%E7%A0%81%E6%A3%80%E6%B5%8B%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
 
+#### 实战，用 `Android Monitor` 检测内存泄漏 ####
+
+```java
+public Handler mHandler = new Handler() {
+    @Override
+    public void handleMessage(Message msg) {
+        super.handleMessage(msg);
+    }
+};
+```
+
+我们直接用匿名内部类的方式创建了一个 Handler，然后用这个 Handler 发送一个延时消息：
+
+```java
+ mHandler.sendEmptyMessageDelayed(0, 3 * 60 * 1000);
+```
+
+具体内存泄漏原因可以查看 [为什么 Handler 发送的延时消息没有执行，会导致内存泄漏？](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler_memory_leak/handler_memory_leak.md#%E4%B8%BA%E4%BB%80%E4%B9%88-handler-%E5%8F%91%E9%80%81%E7%9A%84%E5%BB%B6%E6%97%B6%E6%B6%88%E6%81%AF%E6%B2%A1%E6%9C%89%E6%89%A7%E8%A1%8C%E4%BC%9A%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
+
+我们运行 app，点击『内存泄漏 Demo』 按钮，进入 MemoryLeakActivity，再退出，然后点击上图中的『生成内存快照』按钮，Android Studio 会帮我们生成一个 `hprof` 文件，并自动解析这个文件，接着，我们点击 Android Studio 右边侧栏的 `Analyzer Tasks` 就可以查看是哪里发生内存泄漏了。
+
+![](art/3.png)
+
+![](art/4.png)
+
+![](art/5.png)
+
+最后分析一下，就可以知道，是 Handler 发生了内存泄漏。
