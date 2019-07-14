@@ -287,3 +287,34 @@ Android 3.0 以上的AsyncTask 默认是串行执行任务的。
 
 可以，调用 executeOnExecutor，传入自己实现的线程池即可。
 
+#### AsyncTask 可以在子线程被调用吗？ ####
+
+看到这个问题，我们要想一想这个问题是在问什么，AsyncTask 的 onPostExecute 方法一般是用来更新 UI 的，而更新 UI 必须在主线程。而 onPostExecute 方法又是执行在 InternalHandler 关联的 Looper 所在的线程，对于某些低版本，比如 Android 5.0 版本，它的 InternalHandler 是这样创建的：
+
+```java
+private static final InternalHandler sHandler = new InternalHandler();
+
+private static class InternalHandler extends Handler {
+}
+```
+
+用这种方式创建的 InternalHandler，会关联 AsyncTask 所在线程的 Looper，也就是说，如果 AsyncTask 是在子线程创建的，那么 InternalHandler 投递的任务也会在子线程执行，导致 onPostExecute 也在子线程执行，最后造成的结果就是在子线程更新了 UI，结果当然会报错。
+
+但是在 Android 高版本中，比如 Android 9.0，它的 InternalHandler 是这样创建的：
+
+```java
+private static InternalHandler sHandler;
+
+private static Handler getMainHandler() {
+    synchronized (AsyncTask.class) {
+        if (sHandler == null) {
+            sHandler = new InternalHandler(Looper.getMainLooper());
+        }
+        return sHandler;
+    }
+}
+```
+
+可以看到，InternalHandler 被强制关联了主线程的 Looper，那么不管我们是在哪个线程创建 AsyncTask，最终 onPostExecute 方法都会在主线程被执行。
+
+所以，AsyncTask 能不能在子线程被调用要取决于 Android 版本。
