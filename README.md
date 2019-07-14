@@ -38,6 +38,7 @@ AndroidLife
 	    - [AsyncTask 执行的任务个数有限制吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/asynctask/asynctask.md#asynctask-%E6%89%A7%E8%A1%8C%E7%9A%84%E4%BB%BB%E5%8A%A1%E4%B8%AA%E6%95%B0%E6%9C%89%E9%99%90%E5%88%B6%E5%90%97)
 	    - [AsyncTask 是串行还是并行，怎么实现并行](https://github.com/shadowwingz/AndroidLife/blob/master/article/asynctask/asynctask.md#asynctask-%E6%98%AF%E4%B8%B2%E8%A1%8C%E8%BF%98%E6%98%AF%E5%B9%B6%E8%A1%8C%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E5%B9%B6%E8%A1%8C)
 	    - [AsyncTask 可以自定义线程池吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/asynctask/asynctask.md#asynctask-%E5%8F%AF%E4%BB%A5%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%90%97)
+	- [子线程中能否更新 UI，为什么？]()
 	- [事件分发源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
 	- [滑动冲突解决方式之外部拦截法](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E6%BB%91%E5%8A%A8%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F%E4%B9%8B%E5%A4%96%E9%83%A8%E6%8B%A6%E6%88%AA%E6%B3%95.md)
 	- [滑动冲突解决方式之内部拦截法](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E6%BB%91%E5%8A%A8%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F%E4%B9%8B%E5%86%85%E9%83%A8%E6%8B%A6%E6%88%AA%E6%B3%95.md)
