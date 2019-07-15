@@ -305,4 +305,4 @@ subscribe 方法里其实就只干了一件事，保存订阅类和订阅方法�
 
 > EventBus 会通过反射来解析订阅类，从而获取到订阅类所有的订阅方法，然后把订阅类和订阅方法保存起来。
 
-EventBus 的注册流程我们清楚了，接着我们再来分析 [EventBus 的发送事件流程](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus_unregister.md)。
+EventBus 的注册流程我们清楚了，接着我们再来分析 [EventBus 的发送事件流程](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus_post.md)。

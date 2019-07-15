@@ -170,3 +170,7 @@ AMS 的 registerReceiver 中主要做了两件事
 我们总结一下
 
 >因为广播不支持跨进程，所以需要创建一个 IIntentReceiver 来帮忙跨进程，然后调用 AMS 的 registerReceiver 来注册广播，在 AMS 中，将 IIntentReceiver 和 IntentFilter 分别保存起来，这样就完成了广播的注册。
+
+#### ContentProvider 注册过程中涉及到的 Binder ####
+
+![](art/1.jpg)
