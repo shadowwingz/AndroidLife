@@ -18,9 +18,9 @@
 
 #### 启动过程简述 ####
 
-大致描述一下 Service 的启动过程：
+大致描述一下 Service 的绑定过程：
 
-> Service 的启动过程，我们从 ContextWrapper 的 bindService 说起，先是 ContextImpl 的 bindService，然后内部会通过 bindServiceCommon 来尝试启动 Service，在启动 Service 之前，会把客户端的 ServiceConnection 对象转化为 InnerConnection 对象，方便服务端回调 ServiceConnection 的 onServiceConnected 方法，启动 Service 是一个跨进程过程，它会调用 AMS 的 bindService 方法，AMS 校验完 Service 的合法性后，会通过 ApplicationThread 回调到我们的进程，这也是一次跨进程过程，而 ApplicationThread 就是一个 Binder，回调逻辑是在我们进程的 Binder 线程池中完成，所以需要通过 Handler H 将其切回 UI 线程，绑定 Service 对应的消息是 BIND_SERVICE,它对应着 handleBindService，在这个方法里面完成了 Service 的绑定，同时会回调 Service 的 onBind 方法，但是因为 Service 在服务端进程，Service 的 onBind 方法被调用，客户端并不知道，所以还要通过 AMS 的 publishService 来跨进程调用客户端 ServiceConnection 的 onServiceConnected 方法。
+> Service 的启动过程，我们从 ContextWrapper 的 bindService 说起，先是 ContextImpl 的 bindService，然后内部会通过 bindServiceCommon 来尝试启动 Service，在启动 Service 之前，会把客户端的 ServiceConnection 对象转化为 InnerConnection 对象，方便服务端回调 ServiceConnection 的 onServiceConnected 方法，启动 Service 是一个跨进程过程，它会调用 AMS 的 bindService 方法，AMS 校验完 Service 的合法性后，会通过 ApplicationThread 回调到我们的进程，这也是一次跨进程过程，而 ApplicationThread 就是一个 Binder，回调逻辑是在我们进程的 Binder 线程池中完成，所以需要通过 Handler H 将其切回 UI 线程，绑定 Service 对应的消息是 BIND_SERVICE,它对应着 handleBindService，在这个方法里面完成了 Service 的绑定，同时会回调 Service 的 onBind 方法，AMS 还要通知 ServiceConnection，而 ServiceConnection 和 AMS 不在同一个进程，所以还要通过 AMS 的 publishService 来跨进程调用客户端 ServiceConnection 的 onServiceConnected 方法。
 
 #### 目的 ####
 
@@ -321,8 +321,8 @@ public void connected(ComponentName name, IBinder service) {
 }
 ```
 
-在 `publishServiceLocked` 中，调用了 InnerConnection 的 connected，InnerConnection 我们之前说过，是帮助 AMS 调用客户端 ServiceConnection 的 onServiceConnected 方法的。在 InnerConnection 的 connected 方法中，又调用了 
-ServiceDispatcher 的 connected 方法，最终调用了 mActivityThread.post 方法。
+在 `publishServiceLocked` 中，调用了 InnerConnection 的 `connected`，InnerConnection 我们之前说过，是帮助 AMS 调用客户端 ServiceConnection 的 `onServiceConnected` 方法的。在 InnerConnection 的 `connected` 方法中，又调用了 
+ServiceDispatcher 的 `connected` 方法，最终调用了 `mActivityThread.post` 方法。
 
 mActivityThread 是一个 Handler，其实就是 ActivityThread 的 H，这里调用 post 方法，会把 RunConnection 这个任务投递到主线程去执行，我们看下 RunConnection：
 
@@ -363,3 +363,7 @@ public void doConnected(ComponentName name, IBinder service) {
 在 RunConnection 的 run 方法中，最终调用了 ServiceConnection 的 onServiceConnected 方法，因为是用主线程的 H Handler 投递的任务，所以 onServiceConnected 方法会被执行在主线程。
 
 到这里，Service 的绑定过程也就分析完了。
+
+#### Service 绑定过程中涉及到的 Binder ####
+
+![](art/2.jpg)
