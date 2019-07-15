@@ -71,6 +71,7 @@ AndroidLife
 	        - [Service 的启动过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_service_start/how_service_start.md)
     	        - [Service 启动过程中涉及到的 Binder](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_service_start/how_service_start.md#service-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%B6%89%E5%8F%8A%E5%88%B0%E7%9A%84-binder)
 	        - [Service 的绑定过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_service_bind/how_service_bind.md)
+    	        - [Service 绑定过程中涉及到的 Binder](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_service_bind/how_service_bind.md#service-%E7%BB%91%E5%AE%9A%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%B6%89%E5%8F%8A%E5%88%B0%E7%9A%84-binder)
 	    - BroadcastReceiver 的工作过程
 	        - [广播的注册过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_broadcast_register/how_broadcast_register.md)
 	        - 广播的发送和接收过程
@@ -117,5 +118,3 @@ AndroidLife
 - 细节知识点
     - `setResult` 调用时机
     - [compileSdkVersion、minSdkVersion、targetSdkVersion 含义](https://github.com/shadowwingz/AndroidLife/blob/master/article/compileSdkVersion%E3%80%81minSdkVersion%E3%80%81targetSdkVersion%20%E5%90%AB%E4%B9%89.md)
-
-==
