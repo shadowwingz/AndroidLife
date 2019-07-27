@@ -114,6 +114,8 @@ AndroidLife
         - [多线程造成的内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/article/thread_memory_leak/thread_memory_leak.md)
         	- [怎样避免多线程引起的内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/article/thread_memory_leak/thread_memory_leak.md#%E9%81%BF%E5%85%8D%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%95%E8%B5%B7%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
         - [源码](https://github.com/shadowwingz/AndroidLifeDemo/tree/master/AndroidLifeDemo/app/src/main/java/com/shadowwingz/androidlifedemo/memoryleakdemo)
+    - 缓存策略之 LruCache
+        - LruCache 源码解析
 
 
 - 细节知识点
