@@ -97,6 +97,7 @@ AndroidLife
 
 - 自定义 View
     - [自定义 View 优惠券](https://github.com/shadowwingz/AndroidLife/blob/master/article/coupon_display_view/coupon_display_view.md)
+    - [自定义 View 仪表盘](https://github.com/shadowwingz/AndroidLife/blob/master/article/dashboard/dashboard.md)
 
 
 - 性能优化
