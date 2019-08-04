@@ -1,4 +1,4 @@
-[Demo 地址](https://github.com/shadowwingz/AndroidLifeDemo/tree/master/app/src/main/java/com/shadowwingz/androidlifedemo/customviewdemo)
+[Demo 地址](https://github.com/shadowwingz/AndroidLifeDemo/blob/master/app/src/main/java/com/shadowwingz/androidlifedemo/customviewdemo/conpon/CouponDisplayView.java)
 
 ![](art/1.png)
 
