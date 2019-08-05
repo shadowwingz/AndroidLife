@@ -33,6 +33,7 @@ AndroidLife
 	    - [怎么用代码检测内存泄漏？](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler_memory_leak/handler_memory_leak.md#%E6%80%8E%E4%B9%88%E7%94%A8%E4%BB%A3%E7%A0%81%E6%A3%80%E6%B5%8B%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F)
 	    - [避免内存泄漏的 Handler 写法](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler_memory_leak/handler_memory_leak.md#%E9%81%BF%E5%85%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E7%9A%84-handler-%E5%86%99%E6%B3%95)
 	    - [Android中为什么主线程不会因为 Looper.loop() 里的死循环卡死？（未完成）]()
+	    - [手写消息机制]()
 	- [AsyncTask 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/asynctask/asynctask.md)
 	    - [如果在两个 Activity 中各 new 一个 AsyncTask，任务会排队执行吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/asynctask/asynctask.md#%E5%A6%82%E6%9E%9C%E5%9C%A8%E4%B8%A4%E4%B8%AA-activity-%E4%B8%AD%E5%90%84-new-%E4%B8%80%E4%B8%AA-asynctask%E4%BB%BB%E5%8A%A1%E4%BC%9A%E6%8E%92%E9%98%9F%E6%89%A7%E8%A1%8C%E5%90%97)
 	    - [AsyncTask 执行的任务个数有限制吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/asynctask/asynctask.md#asynctask-%E6%89%A7%E8%A1%8C%E7%9A%84%E4%BB%BB%E5%8A%A1%E4%B8%AA%E6%95%B0%E6%9C%89%E9%99%90%E5%88%B6%E5%90%97)
