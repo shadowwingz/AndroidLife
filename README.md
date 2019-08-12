@@ -86,6 +86,13 @@ AndroidLife
 	- [ListView 源码解析(未完成)](https://github.com/shadowwingz/AndroidLife/blob/master/article/listview/listview.md)
 	- [Notification 的显示过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_notification_show/how_notification_show.md)
 
+
+- SystemUI
+   - 状态栏
+       - [状态栏的启动](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_statusbar_start/how_statusbar_start.md)
+   - 
+
+
 - 开源框架源码解析
     - [EventBus 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus.md)
         - [EventBus 注册订阅者源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/eventbus/eventbus_register.md)
