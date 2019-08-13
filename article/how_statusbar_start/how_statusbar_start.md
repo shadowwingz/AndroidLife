@@ -19,6 +19,8 @@ private void run() {
 }
 ```
 
+再看看 `startOtherServices` 方法：
+
 ```java
 private void startOtherServices() {
     ......
@@ -38,7 +40,7 @@ private void startOtherServices() {
 }
 ```
 
-
+`startOtherServices` 方法中，调用了 `mActivityManagerService.systemReady` 方法，并传入了一个 Runnable 参数，当 `systemReady` 方法执行完后，就会回调 这个 Runnable 任务，在 Runnable 任务中，又调用了 `startSystemUi(context)` 方法：
 
 ```
 static final void startSystemUi(Context context) {
@@ -50,4 +52,5 @@ static final void startSystemUi(Context context) {
 }
 ```
 
+在 `startSystemUi` 中，调用 `startServiceAsUser` 方法启动了 `com.android.systemui.SystemUIService`，到这里，SystemUIService 的启动就完成了。
 
