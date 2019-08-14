@@ -44,6 +44,7 @@ AndroidLife
 	- [IntentService 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/intentservice/intentservice.md)
     	- [连续启动 3 次 IntentService，任务是按顺序执行吗？为什么？](https://github.com/shadowwingz/AndroidLife/blob/master/article/intentservice/intentservice.md#%E8%BF%9E%E7%BB%AD%E5%90%AF%E5%8A%A8-3-%E6%AC%A1-intentservice%E4%BB%BB%E5%8A%A1%E6%98%AF%E6%8C%89%E9%A1%BA%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%90%97%E4%B8%BA%E4%BB%80%E4%B9%88)
 	- [事件分发源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
+    	- 实际例子体验事件分发
 	- [滑动冲突解决方式之外部拦截法](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E6%BB%91%E5%8A%A8%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F%E4%B9%8B%E5%A4%96%E9%83%A8%E6%8B%A6%E6%88%AA%E6%B3%95.md)
 	- [滑动冲突解决方式之内部拦截法](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E6%BB%91%E5%8A%A8%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F%E4%B9%8B%E5%86%85%E9%83%A8%E6%8B%A6%E6%88%AA%E6%B3%95.md)
 	- [MeasureSpec 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/MeasureSpec%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
@@ -83,6 +84,7 @@ AndroidLife
     	    - [ContentProvider 的启动过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_contentprovider_start/how_contentprovider_start.md)
         	    - [ContentProvider 支持跨进程吗？为什么？](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_contentprovider_start/how_contentprovider_start.md#contentprovider-%E6%94%AF%E6%8C%81%E8%B7%A8%E8%BF%9B%E7%A8%8B%E5%90%97%E4%B8%BA%E4%BB%80%E4%B9%88)
         	    - [ContentProvider 中涉及到的 Binder](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_contentprovider_start/how_contentprovider_start.md#contentprovider-%E4%B8%AD%E6%B6%89%E5%8F%8A%E5%88%B0%E7%9A%84-binder)
+        	    - ContentProvider 生命周期
 	- [ListView 源码解析(未完成)](https://github.com/shadowwingz/AndroidLife/blob/master/article/listview/listview.md)
 	- [Notification 的显示过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_notification_show/how_notification_show.md)
 
