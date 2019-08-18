@@ -151,6 +151,8 @@ EventActivity 的布局文件代码如下：
 </FrameLayout>
 ```
 
+#### 情景一：ViewGroupA 的 onInterceptTouchEvent 返回 false 不拦截事件，ViewA 的 onTouchEvent 方法返回 false 不消费事件 ###
+
 代码写好之后，我们点击一下中间蓝色的方块，也就是 ViewA，点击之后滑动一下，然后抬起手指。整个过程打印日志如下：
 
 ```
@@ -253,3 +255,22 @@ onTouchEvent EventActivity
 dispatchTouchEvent EventActivity
 ```
 
+接着，由于 `ACTION_DOWN` 事件 ViewGroupA 没有消费，所以 `ACTION_MOVE` 事件就不会交给 ViewGroupA 处理了，而是直接交给 EventActivity 处理，EventActivity 的 `onTouchEvent` 会被调用：
+
+```
+onTouchEvent EventActivity
+```
+
+#### 手指抬起事件 ####
+
+首先，`ACTION_UP` 事件会被传递到 EventActivity，此时，EventActivity 的 `dispatchTouchEvent` 会被调用：
+
+```
+dispatchTouchEvent EventActivity
+```
+
+接着，由于 `ACTION_MOVE` 事件 ViewGroupA 没有消费，所以 `ACTION_UP` 事件就不会交给 ViewGroupA 处理了，而是直接交给 EventActivity 处理，EventActivity 的 `onTouchEvent` 会被调用：
+
+```
+onTouchEvent EventActivity
+```
