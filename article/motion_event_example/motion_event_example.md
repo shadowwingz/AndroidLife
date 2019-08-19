@@ -151,8 +151,6 @@ EventActivity 的布局文件代码如下：
 </FrameLayout>
 ```
 
-#### 情景一：ViewGroupA 的 onInterceptTouchEvent 返回 false 不拦截事件，ViewA 的 onTouchEvent 方法返回 false 不消费事件 ###
-
 代码写好之后，我们点击一下中间蓝色的方块，也就是 ViewA，点击之后滑动一下，然后抬起手指。整个过程打印日志如下：
 
 ```
