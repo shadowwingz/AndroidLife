@@ -87,7 +87,7 @@ AndroidLife
         	    - ContentProvider 生命周期
 	- [ListView 源码解析(未完成)](https://github.com/shadowwingz/AndroidLife/blob/master/article/listview/listview.md)
 	- [Notification 的显示过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_notification_show/how_notification_show.md)
-	- [Apk 的运行过程]((https://github.com/shadowwingz/AndroidLife/blob/master/article/how_app_run/how_app_run.md)
+	- [Apk 的运行过程](https://github.com/shadowwingz/AndroidLife/blob/master/article/how_app_run/how_app_run.md)
 
 
 - SystemUI
