@@ -1,4 +1,62 @@
-参考 [手把手教你在Mac OS下载、编译及导入Android源码](https://juejin.im/post/5cc5165fe51d456e781f2082#heading-8)
+#### 编译步骤
+
+初始化编译环境，包括后面的 lunch 和 make 指令
+
+```
+source setenv.sh
+```
+
+只编译 framwork
+
+```
+make framework
+```
+
+生成 idegen.jar 文件
+
+```
+mmm development/tools/idegen/
+```
+
+生成 android.iml 和 android.ipr 这两个文件
+
+```
+development/tools/idegen/idegen.sh
+```
+
+打开 android.iml 文件，搜下excludeFolder，在后面加入如下代码：
+
+```
+<excludeFolder url="file://$MODULE_DIR$/art" />
+<excludeFolder url="file://$MODULE_DIR$/bionic" />
+<excludeFolder url="file://$MODULE_DIR$/bootable" />
+<excludeFolder url="file://$MODULE_DIR$/build" />
+<excludeFolder url="file://$MODULE_DIR$/cts" />
+<excludeFolder url="file://$MODULE_DIR$/dalvik" />
+<excludeFolder url="file://$MODULE_DIR$/developers" />
+<excludeFolder url="file://$MODULE_DIR$/development" />
+<excludeFolder url="file://$MODULE_DIR$/device" />
+<excludeFolder url="file://$MODULE_DIR$/docs" />
+<excludeFolder url="file://$MODULE_DIR$/external" />
+<excludeFolder url="file://$MODULE_DIR$/hardware" />
+<excludeFolder url="file://$MODULE_DIR$/kernel" />
+<excludeFolder url="file://$MODULE_DIR$/libcore" />
+<excludeFolder url="file://$MODULE_DIR$/libnativehelper" />
+<excludeFolder url="file://$MODULE_DIR$/out" />
+<excludeFolder url="file://$MODULE_DIR$/pdk" />
+<excludeFolder url="file://$MODULE_DIR$/platform_testing" />
+<excludeFolder url="file://$MODULE_DIR$/prebuilts" />
+<excludeFolder url="file://$MODULE_DIR$/sdk" />
+<excludeFolder url="file://$MODULE_DIR$/system" />
+<excludeFolder url="file://$MODULE_DIR$/test" />
+<excludeFolder url="file://$MODULE_DIR$/toolchain" />
+<excludeFolder url="file://$MODULE_DIR$/tools" />
+<excludeFolder url="file://$MODULE_DIR$/.repo" />
+```
+
+参考 
+[手把手教你在Mac OS下载、编译及导入Android源码](https://juejin.im/post/5cc5165fe51d456e781f2082#heading-8)
+[Android Studio 导入 AOSP 源码](http://wuxiaolong.me/2018/08/15/AOSP3/)
 
 编译源码遇到的一些问题：
 
@@ -34,3 +92,12 @@ Android 模拟器无法调试进程
 
 #### 解决：
 模拟器使用的 image 是 Google Play 版的，要使用 Google api 版的，在 SDK manager 里。
+
+========== 分割线 ==========
+
+classes-full-debug.jar', missing and no known rule to make it
+
+#### 解决：
+
+[Android 8.0整体编译成功后使用mmm进行编译失败处理。](https://blog.csdn.net/m0_37039448/article/details/86654742)
+
