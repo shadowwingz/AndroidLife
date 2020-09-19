@@ -1,3 +1,21 @@
+# setContentView 流程解析
+
+<!-- TOC -->
+
+- [setContentView 流程解析](#setcontentview-流程解析)
+  - [前言](#前言)
+  - [Activity 结构图](#activity-结构图)
+  - [setContentView 总体流程图](#setcontentview-总体流程图)
+  - [setContentView 大概流程](#setcontentview-大概流程)
+    - [1. 创建 DecorView](#1-创建-decorview)
+    - [2. 根据 feature 确定 PhoneWindow 风格](#2-根据-feature-确定-phonewindow-风格)
+    - [3. 通过 DecorView.findViewById 加载 mContentParent](#3-通过-decorviewfindviewbyid-加载-mcontentparent)
+    - [4. 通过 DecorView.findViewById 加载 Toolbar](#4-通过-decorviewfindviewbyid-加载-toolbar)
+    - [5. 通过 LayoutInflater 把 Activity 的布局加载到父布局 mContentParent 中](#5-通过-layoutinflater-把-activity-的布局加载到父布局-mcontentparent-中)
+  - [setContentView 源码分析](#setcontentview-源码分析)
+
+<!-- /TOC -->
+
 ## 前言
 
 对于安卓开发者用来，见的最多的应该就是 `setContentView` 了。这句代码我们也知道它意思了，就是把布局文件设置给 Activity，让 Activity 的界面显示出来。那么，它的内部是怎么实现的呢？
