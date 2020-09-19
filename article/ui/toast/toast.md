@@ -1,4 +1,6 @@
-简单使用：
+# Toast 流程解析
+
+## 简单使用
 
 ```java
 Toast.makeText(this, "a", Toast.LENGTH_SHORT).show();
@@ -8,6 +10,70 @@ Toast toast = Toast.makeText(this, "a", Toast.LENGTH_SHORT);
 toast.show();
 toast.cancel();
 ```
+
+Toast 的使用相信肯定难不倒大家，这里就不再多说了，我们接着想一想，如果让我们自己设计一个 Toast，我们怎么设计比较好？
+
+## 如果让我们设计一个 Toast，我们要怎么设计？
+
+设计一个 Toast，主要有两点：
+
+1. Toast 的显示怎么实现？
+2. Toast 弹出后，过几秒钟消失怎么实现？
+
+### Toast 的显示怎么实现？
+
+#### 把显示 Toast 封装在 Activity 中？
+
+第一个问题的话，首先我们要思考 Toast 应该显示在哪里，是 Activity 里吗？Activity 里好像不大合适，因为我们在每个 Activity 里都可能会弹出 Toast，那难不成要在每个 Activity 里都预先放置一个 Toast？有的童鞋可能会说，可以把 Toast 封装在 BaseActivity 里。
+
+这么一说好像可以哎，等等，那如果显示在 Activity 里，那 App 切换到后台怎么办？这个时候是看不到 Activity 的，那不就没法显示 Toast 了吗。
+
+#### 把显示 Toast 的任务交给 Service？
+
+那放在 Service 里？好像也是个方法，但是这样的话，App 得一直有个服务在后台运行，感觉也不大好。有的童鞋可能会说，不弹 Toast 的时候就不启动 Service，等要弹 Toast 的时候再启动 Service，这样虽然理论上也可以，但方法很不优雅。
+
+#### 优雅实现，借助 WMS 来弹 Toast
+
+那有没有优雅的方法呢？
+
+有，我们可以借助 WMS（WindowManagerService），WMS 作为一个常驻的服务，Android 一开机就自动启动这个服务了，不需要我们手动去启动，而且我们在任意一个 Activity 中都可以轻易调用 WMS，刚好 WMS 也有一个 addView 方法可以用来显示 View，因此 WMS 很适合用来弹 Toast。
+
+当我们需要显示一个 Toast 的时候，就调用 WMS.addView 方法添加一个 View 就可以了，Toast 就被显示出来了。Toast 的布局就是一个 TextView 嘛。
+
+### Toast 弹出后，过几秒钟消失怎么实现？
+
+显示 Toast 的方案有了，那过几秒消失也很简单了。我们显示 Toast 之后，用 Handler 发一个延时消息，在这个延时消息中，我们调用 WMS.removeView 移除 View，Toast 就可以被隐藏了。
+
+看上去 Toast 的实现方案已经有了，那有没有什么问题呢？
+
+思考一个场景，假设我们的 App 调用 WMS.addView 弹了一个 Toast 出来，然后别的 App 也调用 WMS.addView 弹了一个 Toast 出来。这个时候我们发现我们的 Toast 被别的 App 的 Toast 给挡住了。
+
+这是什么原因呢？我们还没有一个专门管理 Toast 的管理者，假设有这么一个管理者的话，当我们的 App 弹出一个 Toast，别的 App 再想弹，得先等我们的 App 的 Toast 显示完毕后才能弹出。
+
+那找谁作为这么一个管理者呢？其实 Android 系统已经为我们准备好了一个 Toast 的管理者，就是 NMS（NotificationManagerService）。NMS 中有一个 ArrayList，专门存放 Toast，每次要弹 Toast 的时候就从 ArrayList 中取出一个 Toast 对象，我们要弹的 Toast 也是先被存放到这个 ArrayList 中。
+
+### 方案确定
+
+OK，那我们的方案就可以确定了：
+
+我们的 App 如果想弹 Toast，得先找 NMS 安排，如果 NMS 同意我们弹，我们就调用 WMS.addView 来弹 Toast，弹出 Toast 后，我们用 Handler 发送一个延时消息，在延时消息中，我们再调用 WMS.removeView 隐藏 Toast。
+
+嗯，其实 Android 系统的 Toast 方案也是这样的。我们来看下 Toast 的显示流程图。
+
+## 显示流程图
+
+![](image/toast.jpg)
+
+从流程图可以看出，Toast 的显示流程大概分为 4 个步骤：
+
+1. App 向 NMS 发起弹 Toast 的请求
+2. NMS 同意 App 弹 Toast
+3. App 调用 WMS.add 弹出 Toast
+4. Toast 显示一段时间后，App 调用 WMS.removeViewImmediate 隐藏 Toast
+
+Toast 的显示涉及到两个系统服务，一个是 NotificationManagerService（简称 NMS），一个是 WindowManagerService（简称 WMS），这两个系统服务在 Toast 显示流程中的作用分别是：
+
+- NMS 负责
 
 源码分析：
 
