@@ -1,20 +1,22 @@
+# Activity 启动的大体流程
+
 <!-- TOC -->
 
-- [Activity 启动流程的定义](#activity-启动流程的定义)
-- [联系生活，方便理解](#联系生活方便理解)
-- [Activity 启动流程 3 步走](#activity-启动流程-3-步走)
-- [总体流程图](#总体流程图)
-- [总结](#总结)
+- [Activity 启动流程的定义](#activity-%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E7%9A%84%E5%AE%9A%E4%B9%89)
+- [联系生活，方便理解](#%E8%81%94%E7%B3%BB%E7%94%9F%E6%B4%BB%E6%96%B9%E4%BE%BF%E7%90%86%E8%A7%A3)
+- [Activity 启动流程 3 步走](#activity-%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B-3-%E6%AD%A5%E8%B5%B0)
+- [总体流程图](#%E6%80%BB%E4%BD%93%E6%B5%81%E7%A8%8B%E5%9B%BE)
+- [总结](#%E6%80%BB%E7%BB%93)
 
 <!-- /TOC -->
 
-### Activity 启动流程的定义
+## Activity 启动流程的定义
 
 什么是 Activity 的启动过程，具体来说，就是从点击按钮启动 Activity 开始，到 Activity 显示出来，这个过程就叫 Activity 的启动过程。
 
 OK，那我们就来分析一下这个过程，只分析大体流程，不看源码。
 
-### 联系生活，方便理解
+## 联系生活，方便理解
 
 在分析之前，我们先来回忆一下我们平常是怎么请假的，我们请假一般是先找直接上级，我们的直接上级同意后，再由老板审批，老板同意后我们就算请假成功了。
 
@@ -25,7 +27,7 @@ OK，那我们就来分析一下这个过程，只分析大体流程，不看源
 刚才说的请假，属于员工的请求，Activity 的启动，也属于 App 的请求。
 App 想启动一个 Activity，得先找自己的上级 Instrumentation，上级同意后，再由老板 ActivityManagerService（简称 AMS）审批，老板同意后，App 就可以启动 Activity 啦。
 
-### Activity 启动流程 3 步走
+## Activity 启动流程 3 步走
 
 整体来说，Activity 的启动过程可以分为 3 步：
 
@@ -37,7 +39,7 @@ App 想启动一个 Activity，得先找自己的上级 Instrumentation，上级
 
 上级是 Instrumentation，我们等会就可以看到他了。
 
-### 总体流程图
+## 总体流程图
 
 先贴一张总体流程图，这个总体流程图包含了上面说的 3 个步骤：
 
@@ -63,7 +65,7 @@ App 想启动一个 Activity，得先找自己的上级 Instrumentation，上级
 - SystemServer 进程，可以理解为在外出差
 - Binder 跨进程操作，可以理解为打电话
 
-### 总结
+## 总结
 
 所以整个流程大概是这样的：
 
