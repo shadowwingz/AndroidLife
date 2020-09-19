@@ -2,16 +2,17 @@
 
 [点击查看大图](https://raw.githubusercontent.com/shadowwingz/AndroidLife/master/article/how_activity_start/art/how_activity_start.jpg)
 
-Activity 可以说是 Android 开发者接触最多的四大组件了，当我们启动一个 Activity 的时候，只需要调用
+当我们启动一个 Activity 的时候，只需要调用
 
 ```
 Intent intent = new Intent(this, TestActivity.class);
 startActivity(intent);
 ```
 
-就可以启动一个 Activity 了，这对 Android 开发者来说是个很熟悉的操作。但是系统内部到底是怎么启动一个 Activity 呢？我们来跟进源码看一下。
+就可以启动一个 Activity 了，这对 Android 开发者来说是个很熟悉的操作。但是系统内部到底是怎么启动一个 Activity 呢？
+在上一篇文章 [Activity 启动的大体流程](https://github.com/shadowwingz/AndroidLife/blob/master/article/activity/general_process/general_process.md) 中我们已经知道了，Activity 启动得先找上级 Instrumentation 审批，Instrumentation 审批通过后再找老板 AMS 审批，老板同意后 Activity 就可以启动了。那么具体到源码又是什么样的呢？我们跟进去看一看。
 
-我们这篇文章，分析 Activity 启动源码，重点分析 Activity 的创建，Activity 的生命周期方法的回调。而对于启动模式和任务栈，这篇文章并不会分析。
+这篇文章，重点分析 Activity 的创建，Activity 的生命周期方法的回调。而对于启动模式和任务栈，这篇文章并不会分析。
 
 在分析之前，我们先提前讲下 Activity 启动过程中涉及到的一些对象，以及它们的作用，避免看源码的时候一脸懵逼。
 
@@ -461,4 +462,4 @@ private Activity performLaunchActivity(ActivityClientRecord r, Intent customInte
 
 #### Activity 启动过程中有几次跨进程 ####
 
-2 次，一次是调用 AMS 的 startActivity 方法，这是客户端远程调用服务端，一次是调用 ApplicationThread 的 `scheduleLaunchActivity` 方法，这时服务端远程调用客户端。
+2 次，一次是调用 AMS 的 startActivity 方法，这是客户端远程调用服务端，一次是调用 ApplicationThread 的 `scheduleLaunchActivity` 方法，这是服务端远程调用客户端。
