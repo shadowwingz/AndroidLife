@@ -4,17 +4,28 @@ AndroidLife
 <br>
 <br>
 
+## 四大组件
+### Activity
+
+- [Activity 启动的大体流程（不涉及源码）](https://github.com/shadowwingz/AndroidLife/blob/master/article/activity/general_process/general_process.md)
+- [Activity 启动流程（源码）](https://github.com/shadowwingz/AndroidLife/blob/master/article/activity/how_activity_start/how_activity_start.md)
+- [setContentView 流程解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/activity/setContentView/setContentView.md)
+
+<br>
+<br>
+
+## UI 组件
+
+### Toast
+
+- [Toast 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/toast/toast.md)
+
+<br>
+<br>
 
 - 源码解析
 	- [AIDL 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/AIDL%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
 	- [Binder 的使用及上层原理](https://github.com/shadowwingz/AndroidLife/blob/master/article/Binder%20%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E4%B8%8A%E5%B1%82%E5%8E%9F%E7%90%86.md)
-	- [Toast 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/toast/toast.md)
-    	- [Toast 显示过程涉及到的 Binder](https://github.com/shadowwingz/AndroidLife/blob/master/article/toast/toast.md#toast-%E6%98%BE%E7%A4%BA%E8%BF%87%E7%A8%8B%E6%B6%89%E5%8F%8A%E5%88%B0%E7%9A%84-binder)
-		- [Toast 有个数限制吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/toast/toast.md#toast-%E6%9C%89%E4%B8%AA%E6%95%B0%E9%99%90%E5%88%B6%E5%90%97)
-		- [Toast 可以自定义时长吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/toast/toast.md#toast-%E5%8F%AF%E4%BB%A5%E8%87%AA%E5%AE%9A%E4%B9%89%E6%97%B6%E9%95%BF%E5%90%97)
-	    - [子线程可以弹 Toast 吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/show_toast_in_thread/show_toast_in_thread.md)
-	    	- [Looper.loop() 在 Toast 前面调用可以吗？](https://github.com/shadowwingz/AndroidLife/blob/master/article/show_toast_in_thread/show_toast_in_thread.md#looperloop-%E5%9C%A8-toast-%E5%89%8D%E9%9D%A2%E8%B0%83%E7%94%A8%E5%8F%AF%E4%BB%A5%E5%90%97)
-	    	- [主线程也是先调用 Looper.loop，为什么主线程可以弹 Toast？](https://github.com/shadowwingz/AndroidLife/blob/master/article/show_toast_in_thread/show_toast_in_thread.md#%E4%B8%BB%E7%BA%BF%E7%A8%8B%E4%B9%9F%E6%98%AF%E5%85%88%E8%B0%83%E7%94%A8-looperloop%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%BB%E7%BA%BF%E7%A8%8B%E5%8F%AF%E4%BB%A5%E5%BC%B9-toast)
 	- [AlertDialog 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/AlertDialog%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
 	- [ThreadLocal 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/ThreadLocal%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
 	- [消息机制源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/handler/handler.md)
