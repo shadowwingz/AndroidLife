@@ -506,7 +506,9 @@ hide 方法和 show 方法的实现类似，也是通过 Handler 来切换线程
 
 ### Toast 显示过程涉及到的 Binder ####
 
-![](art/1.jpg)
+Toast 的显示过程中，涉及到的 Binder 如下：
+
+![](image/toast_binder.jpg)
 
 ### Toast 有个数限制吗？
 
