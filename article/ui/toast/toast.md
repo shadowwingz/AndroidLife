@@ -1,5 +1,30 @@
 # Toast 流程解析
 
+<!-- TOC -->
+
+- [简单使用](#%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8)
+- [如果让我们设计一个 Toast，我们要怎么设计？](#%E5%A6%82%E6%9E%9C%E8%AE%A9%E6%88%91%E4%BB%AC%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA-toast%E6%88%91%E4%BB%AC%E8%A6%81%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1)
+    - [Toast 的显示怎么实现？](#toast-%E7%9A%84%E6%98%BE%E7%A4%BA%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0)
+        - [把显示 Toast 封装在 Activity 中？](#%E6%8A%8A%E6%98%BE%E7%A4%BA-toast-%E5%B0%81%E8%A3%85%E5%9C%A8-activity-%E4%B8%AD)
+        - [把显示 Toast 的任务交给 Service？](#%E6%8A%8A%E6%98%BE%E7%A4%BA-toast-%E7%9A%84%E4%BB%BB%E5%8A%A1%E4%BA%A4%E7%BB%99-service)
+        - [借助 WMS 来弹 Toast](#%E5%80%9F%E5%8A%A9-wms-%E6%9D%A5%E5%BC%B9-toast)
+    - [Toast 弹出后，过几秒钟消失怎么实现？](#toast-%E5%BC%B9%E5%87%BA%E5%90%8E%E8%BF%87%E5%87%A0%E7%A7%92%E9%92%9F%E6%B6%88%E5%A4%B1%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0)
+    - [方案确定](#%E6%96%B9%E6%A1%88%E7%A1%AE%E5%AE%9A)
+- [Toast 的显示流程图](#toast-%E7%9A%84%E6%98%BE%E7%A4%BA%E6%B5%81%E7%A8%8B%E5%9B%BE)
+- [源码分析](#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90)
+    - [App 向 NMS 发起弹 Toast 的请求](#app-%E5%90%91-nms-%E5%8F%91%E8%B5%B7%E5%BC%B9-toast-%E7%9A%84%E8%AF%B7%E6%B1%82)
+    - [NMS 同意 App 弹 Toast](#nms-%E5%90%8C%E6%84%8F-app-%E5%BC%B9-toast)
+    - [NMS 通过 Handler 发送一个让 App 隐藏 Toast 的延时消息](#nms-%E9%80%9A%E8%BF%87-handler-%E5%8F%91%E9%80%81%E4%B8%80%E4%B8%AA%E8%AE%A9-app-%E9%9A%90%E8%97%8F-toast-%E7%9A%84%E5%BB%B6%E6%97%B6%E6%B6%88%E6%81%AF)
+    - [App 调用 WMS.add 弹出 Toast](#app-%E8%B0%83%E7%94%A8-wmsadd-%E5%BC%B9%E5%87%BA-toast)
+    - [Toast 显示完毕后，App 调用 WMS.removeView 隐藏 Toast](#toast-%E6%98%BE%E7%A4%BA%E5%AE%8C%E6%AF%95%E5%90%8Eapp-%E8%B0%83%E7%94%A8-wmsremoveview-%E9%9A%90%E8%97%8F-toast)
+- [细节问题](#%E7%BB%86%E8%8A%82%E9%97%AE%E9%A2%98)
+    - [Toast 显示过程涉及到的 Binder](#toast-%E6%98%BE%E7%A4%BA%E8%BF%87%E7%A8%8B%E6%B6%89%E5%8F%8A%E5%88%B0%E7%9A%84-binder)
+    - [Toast 有个数限制吗？](#toast-%E6%9C%89%E4%B8%AA%E6%95%B0%E9%99%90%E5%88%B6%E5%90%97)
+    - [Toast 可以自定义时长吗？](#toast-%E5%8F%AF%E4%BB%A5%E8%87%AA%E5%AE%9A%E4%B9%89%E6%97%B6%E9%95%BF%E5%90%97)
+    - [可以在子线程弹 Toast 吗？](#%E5%8F%AF%E4%BB%A5%E5%9C%A8%E5%AD%90%E7%BA%BF%E7%A8%8B%E5%BC%B9-toast-%E5%90%97)
+
+<!-- /TOC -->
+
 ## 简单使用
 
 ```java
@@ -30,11 +55,11 @@ Toast 的使用相信肯定难不倒大家，这里就不再多说了，我们�
 
 #### 把显示 Toast 的任务交给 Service？
 
-那放在 Service 里？好像也是个方法，但是这样的话，App 得一直有个服务在后台运行，感觉也不大好。有的童鞋可能会说，不弹 Toast 的时候就不启动 Service，等要弹 Toast 的时候再启动 Service，这样虽然理论上也可以，但方法很不优雅。
+那放在 Service 里？好像也不行，Service 是在后台默默运行的，它是没有界面的，没有界面的话，我们的 Toast 的 View 就没法加载了。
 
-#### 优雅实现，借助 WMS 来弹 Toast
+#### 借助 WMS 来弹 Toast
 
-那有没有优雅的方法呢？
+那有没有其他方法呢？可以随时随地加载 View。
 
 有，我们可以借助 WMS（WindowManagerService），WMS 作为一个常驻的服务，Android 一开机就自动启动这个服务了，不需要我们手动去启动，而且我们在任意一个 Activity 中都可以轻易调用 WMS，刚好 WMS 也有一个 addView 方法可以用来显示 View，因此 WMS 很适合用来弹 Toast。
 
@@ -60,7 +85,7 @@ OK，那我们的方案就可以确定了：
 
 嗯，其实 Android 系统的 Toast 方案也是这样的。我们来看下 Toast 的显示流程图。
 
-## 显示流程图
+## Toast 的显示流程图
 
 ![](image/toast.jpg)
 
@@ -68,14 +93,23 @@ OK，那我们的方案就可以确定了：
 
 1. App 向 NMS 发起弹 Toast 的请求
 2. NMS 同意 App 弹 Toast
-3. App 调用 WMS.add 弹出 Toast
-4. Toast 显示一段时间后，App 调用 WMS.removeViewImmediate 隐藏 Toast
+3. NMS 通过 Handler 发送一个让 App 隐藏 Toast 的延时消息
+4. App 调用 `WMS.add` 弹出 Toast
+5. Toast 显示完毕后，App 调用 `WMS.removeViewImmediate` 隐藏 Toast
 
-Toast 的显示涉及到两个系统服务，一个是 NotificationManagerService（简称 NMS），一个是 WindowManagerService（简称 WMS），这两个系统服务在 Toast 显示流程中的作用分别是：
+Toast 的显示涉及到两个系统服务，一个是 `NotificationManagerService`（简称 NMS），一个是 `WindowManagerService`（简称 WMS），这两个系统服务以及 App 自身在 Toast 显示流程中的作用分别是：
 
-- NMS 负责
+- App 负责发起弹出 Toast 和隐藏 Toast 的请求
+- NMS 负责存储 App 想要弹出的 Toast，以及决定下一个要弹出的是哪一个 Toast
+- WMS 负责 Toast 的具体显示和隐藏的实现
 
-源码分析：
+这样看上去，职责划分还是非常明确的。
+
+好了，大致流程我们已经弄清楚了，那我们来跟下源码看下具体流程。
+
+## 源码分析
+
+### App 向 NMS 发起弹 Toast 的请求
 
 先看 `makeText` 源码：
 
@@ -170,7 +204,7 @@ private static class TN extends ITransientNotification.Stub {
 
 TN 继承了 `ITransientNotification.Stub`，所以 TN 是远程服务真正干活的类，这也告诉我们，弹一个 Toast 并没有我们想象中的那么简单，而是一个 IPC 过程。
 
-TN 是服务端，内部封装了 `show` 方法和 `hide` 方法。也就是说，显示和隐藏 Toast 并不是我们决定的，而是服务端，也就是 NMS 决定的。
+TN 是服务端，内部封装了 `show` 方法和 `hide` 方法。也就是说，能否显示和隐藏 Toast 并不是我们决定的，而是服务端，也就是 NMS 决定的。
 
 接着，调用了 NMS 的 `enqueueToast` 方法，这是一次跨进程调用，客户端远程调用服务端的方法：
 
@@ -278,9 +312,29 @@ void showNextToastLocked() {
 }
 ```
 
-在 showNextToastLocked 方法中，调用了 `record.callback.show(record.token)` 方法来显示 Toast，`record.callback` 是 `ITransientNotification` 类型，也就是上文中的 TN，也就是说，服务器远程调用客户端的 show 方法，show 方法是运行在客户端的 Binder 线程池里。
+### NMS 同意 App 弹 Toast
 
-我们看下 show 方法的具体实现：
+在 showNextToastLocked 方法中，调用了 `record.callback.show(record.token)` 方法来显示 Toast，`record.callback` 是 `ITransientNotification` 类型，也就是上文中的 TN，也就是说，服务端远程调用客户端的 show 方法，show 方法是运行在客户端的 Binder 线程池里。
+
+这里服务端调用客户端（App）的 show 方法，说明 NMS 同意了 App 弹 Toast 的请求。
+
+### NMS 通过 Handler 发送一个让 App 隐藏 Toast 的延时消息
+
+在调用 show 方法之后，NMS 又调用了 `scheduleTimeoutLocked` 方法，这个方法就是隐藏 Toast 的关键了，这个方法会发送一个隐藏 Toast 的延时消息，当这个延时消息被触发的时候，App 会远程调用 WMS 来隐藏 Toast。
+
+```java
+private void scheduleTimeoutLocked(ToastRecord r)
+{
+    mHandler.removeCallbacksAndMessages(r);
+    // 创建一个隐藏 Toast 延时消息，延时时间为 Toast 的显示时长
+    Message m = Message.obtain(mHandler, MESSAGE_TIMEOUT, r);
+    long delay = r.duration == Toast.LENGTH_LONG ? LONG_DELAY : SHORT_DELAY;
+    // 发送延时消息
+    mHandler.sendMessageDelayed(m, delay);
+}
+```
+
+隐藏 Toast 的后续实现我们先不看，我们先看 show 方法的具体实现：
 
 ```java
 Toast.TN # show
@@ -323,7 +377,11 @@ public void handleShow() {
 }
 ```
 
-刚刚我们说了，服务端远程调用客户端的 show 方法，所以 show 方法是运行在 Binder 线程池里的，而显示 Toast 属于一个更新 UI 操作，当然不能在线程池里完成，所以要用 Handler 来切换线程。所以在 TN 的 show 方法中，调用了 `mHandler.post(mShow);`，把 mShow 这个 Runnable 任务投递到 mHandler 所在线程，也就是主线程关联的消息队列里，这样 mShow 就会在主线程执行了。在 `mShow` 中，调用了 `handleShow` 方法，在这个方法中，调用了 WindowManager 的 addView 方法，把 Toast 显示了出来。
+刚刚我们说了，服务端远程调用客户端的 show 方法，所以 show 方法是运行在 Binder 线程池里的，而显示 Toast 属于一个更新 UI 操作，当然不能在线程池里完成，所以要用 Handler 来切换线程。所以在 TN 的 show 方法中，调用了 `mHandler.post(mShow);`，把 mShow 这个 Runnable 任务投递到 mHandler 所在线程，也就是主线程关联的消息队列里，这样 mShow 就会在主线程执行了。
+
+### App 调用 `WMS.add` 弹出 Toast
+
+在 `mShow` 中，调用了 `handleShow` 方法，在这个方法中，调用了 WindowManager 的 addView 方法，把 Toast 显示了出来。
 
 Toast 显示出来之后，过段时间就要消失，我们再来看下让 Toast 消失的代码，也就是 `scheduleTimeoutLocked` 方法：
 
@@ -394,7 +452,9 @@ void cancelToastLocked(int index) {
 
 在 scheduleTimeoutLocked 方法中，首先调用了 Handler 的 sendMessageDelayed 方法发送了一个延时消息，这个延时消息就是 Toast 要显示的时长。
 
-接着，会调用 `record.callback.hide()` 方法，也就是 TN 的 hide 方法，来隐藏 Toast，我们看下 hide 方法：
+### Toast 显示完毕后，App 调用 `WMS.removeView` 隐藏 Toast
+
+接着，会调用 `record.callback.hide()` 方法，也就是 TN 的 hide 方法，来隐藏 Toast。这个时候，代码调用就从 NMS 转移到了 App，我们看下 hide 方法：
 
 ```java
 Toast.TN # hide
@@ -427,6 +487,7 @@ public void handleHide() {
         // the view isn't yet added, so let's try not to crash.
         if (mView.getParent() != null) {
             if (localLOGV) Log.v(TAG, "REMOVE! " + mView + " in " + this);
+            // 调用 WMS.removeView 隐藏 Toast
             mWM.removeView(mView);
         }
 
@@ -435,60 +496,58 @@ public void handleHide() {
 }
 ```
 
-hide 方法和 show 方法的实现类似，也是通过 Handler 来切换线程，然后调用 WindowManager 的 removeView 方法来移除 View，也就是隐藏 Toast。
+hide 方法和 show 方法的实现类似，也是通过 Handler 来切换线程，然后调用 WindowManager 的 removeView 方法来移除 View，也就是隐藏 Toast，这个时候，代码调用就从 App 转移到了 WMS。
 
 隐藏完 Toast 之后，还有些工作要收尾，就是 `mToastQueue` 队列，因为 Toast 已经隐藏了，所以它就没用了，没用的话就要从队列中移除掉了。
 
-到这里，一个 Toast 的显示和隐藏我们就分析完了，但是还不够，因为一个 Toast 隐藏了之后，如果还有其它的 Toast 的话，要继续显示。也就是 `showNextToastLocked` 方法：
+到这里，一个 Toast 的显示和隐藏我们就分析完了。
+
+## 细节问题
+
+### Toast 显示过程涉及到的 Binder ####
+
+![](art/1.jpg)
+
+### Toast 有个数限制吗？
+
+有，对于非系统应用，每个应用弹的 Toast 的最大限制为 `MAX_PACKAGE_NOTIFICATIONS`，超过这个数量 Toast 会被丢弃，不会弹出。
+
+不同 Android 版本 `MAX_PACKAGE_NOTIFICATIONS` 值的大小也不同，Android 9 及以下版本中，`MAX_PACKAGE_NOTIFICATIONS` 的值是 50，从 Android 10 开始，`MAX_PACKAGE_NOTIFICATIONS` 的值是 25。
+
+具体实现在 NMS 的 `enqueueToast` 方法中：
 
 ```java
-NMS # showNextToastLocked
+NMS # enqueueToast
 
-void showNextToastLocked() {
-    ToastRecord record = mToastQueue.get(0);
-    while (record != null) {
-        if (DBG) Slog.d(TAG, "Show pkg=" + record.pkg + " callback=" + record.callback);
-        try {
-            // 显示 Toast
-            record.callback.show();
-            // 隐藏 Toast
-            scheduleTimeoutLocked(record);
-            return;
-        } catch (RemoteException e) {
-            Slog.w(TAG, "Object died trying to show notification " + record.callback
-                    + " in package " + record.pkg);
-            // remove it from the list and let the process die
-            int index = mToastQueue.indexOf(record);
-            if (index >= 0) {
-                // 从队列中移除 Toast
-                mToastQueue.remove(index);
+// Toast 个数限制
+static final int MAX_PACKAGE_NOTIFICATIONS = 25;
+
+// Limit the number of toasts that any given package except the android
+// package can enqueue.  Prevents DOS attacks and deals with leaks.
+if (!isSystemToast) {
+    int count = 0;
+    final int N = mToastQueue.size();
+    for (int i=0; i<N; i++) {
+            final ToastRecord r = mToastQueue.get(i);
+            if (r.pkg.equals(pkg)) {
+                count++;
+                if (count >= MAX_PACKAGE_NOTIFICATIONS) {
+                    Slog.e(TAG, "Package has already posted " + count
+                        + " toasts. Not showing more. Package=" + pkg);
+                    return;
+                }
             }
-            keepProcessAliveLocked(record.pid);
-            if (mToastQueue.size() > 0) {
-                record = mToastQueue.get(0);
-            } else {
-                record = null;
-            }
-        }
     }
 }
 ```
 
-在 `showNextToastLocked` 方法中，会从 mToastQueue 队列中取出第一个 Toast，然后调用 `record.callback.show()` 来显示，再调用 `scheduleTimeoutLocked(record)` 来延迟隐藏 Toast。最后调用 `mToastQueue.remove(index)` 从队列中移除 Toast。
+### Toast 可以自定义时长吗？
 
-#### Toast 显示过程涉及到的 Binder ####
-
-![](art/1.jpg)
-
-#### Toast 有个数限制吗？
-
-有，对于非系统应用，每个应用弹的 Toast 不能超过 50 个，否则 Toast 会被丢弃。
-
-#### Toast 可以自定义时长吗？
-
-不可以，虽然在 Toast 的 `makeText` 方法中，第三个参数让我们传入 Toast 要显示的时长，但是时长其实只有内置的 `Toast.LENGTH_SHORT` 和 `LENGTH_LONG` 可以选，即使传入自定义的时长，在源码中也会被转换成内置的时长。具体可以查看 `NMS` 的 `scheduleTimeoutLocked` 方法：
+不可以，虽然在 Toast 的 `makeText` 方法中，第三个参数可以让我们传入 Toast 要显示的时长 `duration`，但是时长其实只有内置的 `Toast.LENGTH_SHORT` 和 `LENGTH_LONG` 可以选，即使传入自定义的时长，在源码中也会被转换成内置的时长。具体可以查看 `NMS` 的 `scheduleTimeoutLocked` 方法：
 
 ```java
+NMS # scheduleTimeoutLocked
+
 private void scheduleTimeoutLocked(ToastRecord r)
 {
     mHandler.removeCallbacksAndMessages(r);
@@ -499,3 +558,17 @@ private void scheduleTimeoutLocked(ToastRecord r)
 ```
 
 在 `scheduleTimeoutLocked` 方法中，会判断 `r.duration` 是不是等于 `Toast.LENGTH_LONG`，`r.duration` 就是我们传入 Toast 的时长，如果我们传入的时长是 `Toast.LENGTH_LONG`，那么 Toast 显示的时长就是 `LONG_DELAY`，也就是 3.5 秒，如果我们传入的时长不是 `Toast.LENGTH_LONG`，而是传入了 `Toast.LENGTH_SHORT`，或者自定义的时长，那么 Toast 显示的时长就是 `SHORT_DELAY`，也就是 2 秒。
+
+### 可以在子线程弹 Toast 吗？
+
+可以，不过方法比较特殊，方法如下：
+
+```kotlin
+Thread(Runnable {
+    Looper.prepare()
+    Toast.makeText(this, "子线程的 Toast", Toast.LENGTH_SHORT).show()
+    Looper.loop()
+}).start()
+```
+
+具体原因可以参考 [子线程中能否弹 Toast]()
