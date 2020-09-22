@@ -7,6 +7,7 @@
   - [Handler().postDelayed 方案缺点](#handlerpostdelayed-方案缺点)
   - [使用 View.post 获取 View 宽高](#使用-viewpost-获取-view-宽高-1)
   - [为什么 View.post 可以获取到 View 宽高？](#为什么-viewpost-可以获取到-view-宽高)
+  - [Handler.post 可以获取宽高吗？](#handlerpost-可以获取宽高吗)
 
 <!-- /TOC -->
 
