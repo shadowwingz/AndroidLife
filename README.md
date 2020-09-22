@@ -10,6 +10,8 @@ AndroidLife
 - [Activity 启动的大体流程（不涉及源码）](https://github.com/shadowwingz/AndroidLife/blob/master/article/activity/general_process/general_process.md)
 - [Activity 启动流程（源码）](https://github.com/shadowwingz/AndroidLife/blob/master/article/activity/how_activity_start/how_activity_start.md)
 - [setContentView 流程解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/activity/setContentView/setContentView.md)
+- [onResume 里能获取 View 宽高吗？](https://github.com/shadowwingz/AndroidLife/blob/3da4ae4ae9fe8dc77758f0ead58930b7728f9c8f/article/activity/activity_start_questions/get_view_width_in_resume.md)
+- [使用 View.post 获取 View 宽高](https://github.com/shadowwingz/AndroidLife/blob/master/article/activity/activity_start_questions/use_view_post_get_view_width.md)
 
 <br>
 <br>

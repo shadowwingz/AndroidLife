@@ -304,3 +304,13 @@ private void performTraversals() {
 大概就是这样：
 
 ![](image/view_post.jpg)
+
+## Handler.post 可以获取宽高吗？
+
+刚才我们分析了，既然 View.post 内部是调用了 Handler.post 来获取 View 宽高，那我们在 onResume 中直接用 Handler.post 能不能获取到 View 宽高呢？
+
+答案是不能，有兴趣的童鞋可以试一下。
+
+为什么不能呢，因为如果我们在 onResume 中使用 Handler post 一个消息来获取 View 宽高，那这个消息会在 performTraversals 之前执行，此时 View 还没有绘制完成，因此我们无法拿到 View 宽高。
+
+![](image/handler_post.jpg)
