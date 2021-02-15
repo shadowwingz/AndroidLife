@@ -166,6 +166,10 @@ public class LogMonitor {
 
 这里我们用 HandlerThread 来创建一个 Handler，然后让这个 Handler 来投递 Runnable 任务，也就是打印方法堆栈，Runnable 任务会在非 UI 线程执行，这样就不会阻塞 UI。
 
+原理图：
+
+![](image/Looper检测卡顿.jpg)
+
 ### 使用：
 
 在 Application 的 onCreate 方法里，调用：
@@ -181,3 +185,9 @@ BlockDetectByPrinter.start();
 ```java
 mIoHandler = new Handler(Looper.getMainLooper());
 ```
+
+原因：
+
+如果我们用主线程的 Handler 来投递打印堆栈的任务，那么这个打印堆栈的任务就永远无法被执行，因为在上一条消息执行完毕后，就会把打印堆栈的消息给 remove 掉。
+
+![](image/Looper检测卡顿_不正常.jpg)
