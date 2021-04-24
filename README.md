@@ -34,8 +34,8 @@ AndroidLife
 
 - [Handler 的工作流程](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/handler/Handler%20%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.md)
 - [ThreadLocal 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/handler/ThreadLocal%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
-- [Handler 细节之 IdleHandler]()
-- [Handler 细节之内存屏障]()
+- [Handler 细节之 IdleHandler](待完成)
+- [Handler 细节之内存屏障](待完成))
 
 ### Binder
 
@@ -82,7 +82,7 @@ AndroidLife
 
 ### ListView
 
-- [ListView 的工作原理]()
+- [ListView 的工作原理](待完成)
 
 ### AlertDialog
 
@@ -97,17 +97,15 @@ AndroidLife
 - [Eventbus#unregister 流程](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6/eventbus/Eventbus%23unregister%20%E6%B5%81%E7%A8%8B.md)
 - [EventBus#post 流程](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6/eventbus/EventBus%23post%20%E6%B5%81%E7%A8%8B.md)
 
-### Retrofit
+### Retrofit(待完成)
 
-### Glide
+### Glide(待完成)
 
-### Butterknife
+### Butterknife(待完成)
 
-### Rxjava
+### Rxjava(待完成)
 
-### Okhttp
-
-## 性能优化
+### Okhttp(待完成)
 
 ### 内存优化
 
