@@ -124,5 +124,11 @@ AndroidLife
 - [使用 TraceView 定位卡顿](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96/%E4%BD%BF%E7%94%A8%20TraceView%20%E5%AE%9A%E4%BD%8D%E5%8D%A1%E9%A1%BF/%E4%BD%BF%E7%94%A8%20TraceView%20%E5%AE%9A%E4%BD%8D%E5%8D%A1%E9%A1%BF.md)
 - [使用 Looper#setMessageLogging 检测卡顿](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96/%E4%BD%BF%E7%94%A8%20Looper%23setMessageLogging%20%E6%A3%80%E6%B5%8B%E5%8D%A1%E9%A1%BF/%E4%BD%BF%E7%94%A8%20Looper%23setMessageLogging%20%E6%A3%80%E6%B5%8B%E5%8D%A1%E9%A1%BF.md)
 
+### 工具篇
+
+Android Studio 虽然是一款优秀的 IDE，但是在某些选项设定上，默认的选项不太近人意，好在很多选项我们可以修改。
+
+- 代码注释在缩进之后
+
 <br>
 <br>
