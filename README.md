@@ -128,7 +128,7 @@ AndroidLife
 
 Android Studio 虽然是一款优秀的 IDE，但是在某些选项设定上，默认的选项不太近人意，好在很多选项我们可以修改。
 
-- 代码注释在缩进之后
+- [代码注释在缩进之后](https://github.com/shadowwingz/AndroidLife/blob/master/article/%E5%85%B6%E4%BB%96/Android%20Studio%20%E9%85%8D%E7%BD%AE/%E4%BB%A3%E7%A0%81%E6%B3%A8%E9%87%8A.md)
 
 <br>
 <br>
