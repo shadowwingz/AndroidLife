@@ -166,3 +166,69 @@ binding.user = User("Test", "User")
 看似是 2 个用途，实际上它们在使用中也是密不可分的。先绑定，再赋值。
 
 我们把一个实体类对象赋值给 `binding.user`，这个实体类对象就会把它的每个字段再赋值给它所绑定的每一个控件。在这里例子中就是，我们把一个 User 对象赋值给 `binding.user`，这个 user 对象的 firstName 值和 lastName 值就分别设置给了对应的 TextView。
+
+### RecyclerView 中使用 DataBinding
+
+和 Activity 中类似，RecyclerView 中使用 Binding 分为 2 步：
+
+1. 创建列表 item 布局文件对应的 binding
+2. 给 binding 内部的数据赋值
+
+代码大概类似于这个样子：
+
+```kotlin
+class DemoListAdapter : ListAdapter<ListBean, RecyclerView.ViewHolder>(UserDiffCallback()) {
+
+  // 这里不用再 findViewById 实例化 View
+  class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
+
+  // 使用 DiffUtil，提高刷新效率
+  class UserDiffCallback : DiffUtil.ItemCallback<ListBean>() {
+
+    override fun areItemsTheSame(oldItem: ListBean, newItem: ListBean): Boolean {
+      return oldItem.title == newItem.title
+    }
+
+    override fun areContentsTheSame(oldItem: ListBean, newItem: ListBean): Boolean {
+      return oldItem == newItem
+    }
+  }
+
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    // 使用 DataBindingUtil.inflate 获取布局文件对应的 binding
+    val binding: DemoListBinding = DataBindingUtil.inflate(
+      LayoutInflater.from(parent.context), R.layout.demo_list, parent, false
+    )
+    return ViewHolder(binding.root)
+    // val rootView = LayoutInflater.from(parent.context).inflate(R.layout.demo_list, parent, false)
+    // return ViewHolder(rootView)
+  }
+
+  override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    // 先通过 View 获取到对应的 binding
+    val binding: DemoListBinding? = DataBindingUtil.getBinding(holder.itemView)
+    // 再通过 getItem 拿到对应的 item 数据，赋值给 binding.data，完成刷新
+    binding?.data = getItem(position)
+  }
+}
+```
+
+核心就是 `onCreateViewHolder` 和 `onBindViewHolder` ，在 `onCreateViewHolder` 中我们使用 DataBindingUtil.inflate 获取了布局文件对应的 binding，然后在 `onBindViewHolder` 中我们通过 holder 拿到 itemView 对应的 binding，最后给 binding.data 赋值。这里的 binding.data 就是 item 布局文件中引入的 data：
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.shadowwingz.androidpractice.jetpack.databinding.list.ListBean" />
+    </data>
+
+    <!-- 省略了下面的布局 -->
+
+</layout>
+```
