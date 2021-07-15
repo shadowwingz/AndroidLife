@@ -232,3 +232,46 @@ class DemoListAdapter : ListAdapter<ListBean, RecyclerView.ViewHolder>(UserDiffC
 
 </layout>
 ```
+
+### 利用 DataBinding 在 xml 中直接调用方法
+
+回想一下我们给控件设置点击事件的流程：
+
+先给控件定义一个 id，然后在 `Activity/Fragment` 中通过 `findViewById` 获取到控件的实例，再调用控件的 setOnClickListener 方法。
+
+那么，有没有更简单的呢？
+
+也是有的。
+
+我们可以在 Activity 中随便定义一个方法，方法名随意，形参是 View 类型，大概类似这个样子：
+
+```kotlin
+fun clickEvent(view: View) {
+    LogUtil.d("点击")
+}
+```
+
+然后在 xml 中我们给 Button 设置一个 onClick 属性：
+
+```xml
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:onClick="clickEvent"
+    android:text="+1" />
+```
+
+这样，我们就给 Button 设置好了点击事件，我们甚至都不用给 Button 设置一个 id。
+
+但是我们发现这样也有个局限性，就是这个点击事件只能写在 Activity 里，而我们日常开发中有时候点击按钮触发的逻辑有时候是其他类的方法，那有没有方法能在 xml 中直接调用其它类的方法呢？
+
+也是有的。
+
+我们首先在 xml 中引入一个类，
+
+```xml
+<variable
+    name="clickTest"
+    type="com.shadowwingz.androidpractice.jetpack.databinding.ClickTest" />
+```
+
