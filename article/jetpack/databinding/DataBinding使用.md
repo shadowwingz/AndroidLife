@@ -267,7 +267,7 @@ fun clickEvent(view: View) {
 
 也是有的。
 
-我们首先在 xml 中引入一个类，
+我们首先在 xml 中引入 ClickTest 类，
 
 ```xml
 <variable
@@ -275,3 +275,32 @@ fun clickEvent(view: View) {
     type="com.shadowwingz.androidpractice.jetpack.databinding.ClickTest" />
 ```
 
+在 ClickTest 中，我们写一个 onClick 方法：
+
+```kotlin
+class ClickTest {
+  fun onClick(view: View) {
+    LogUtil.d("点击")
+  }
+}
+```
+
+引入了 ClickTest 类之后，我们给 Button 绑定这个 onClick 方法，具体的绑定是：name + 方法名。这里的 name 就是我们引入类的 name，`name="clickTest"`，也就是 `clickTest`，方法名是 onClick，所以完整写法就是：`android:onClick="@{clickTest::onClick}"`：
+
+```xml
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:onClick="@{clickTest::onClick}"
+    android:text="+1" />
+```
+
+目前我们虽然给 Button 的 onClick 属性绑定了 `clickTest::onClick`，但是这里的 clickTest 只是引用，并没有实际值。所以我们还需要把 binding 和实际 ClickTest 对象关联起来：
+
+```kotlin
+binding.clickTest = ClickTest()
+```
+
+这里我们创建了一个 ClickTest 对象，然后赋值给 binding.clickTest。
+
+这样，我们就给 Button 绑定了 ClickTest 的方法。
