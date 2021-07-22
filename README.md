@@ -4,6 +4,18 @@ AndroidLife
 <br>
 <br>
 
+## JetPack
+
+### DataBinding
+
+- [我们为什么需要 DataBinding]()
+- [DataBinding 使用]()
+- [BindingMethod 的使用]()
+
+### ViewModel
+
+- [我们为什么需要 ViewModel]()
+
 ## 四大组件
 ### Activity
 
