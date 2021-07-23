@@ -9,12 +9,12 @@ AndroidLife
 ### DataBinding
 
 - [我们为什么需要 DataBinding]()
-- [DataBinding 使用]()
-- [BindingMethod 的使用]()
+- [DataBinding 使用](https://github.com/shadowwingz/AndroidLife/blob/master/jetpack/databinding/DataBinding%E4%BD%BF%E7%94%A8.md)
+- [BindingMethod 的使用](https://github.com/shadowwingz/AndroidLife/blob/master/jetpack/databinding/BingingMethod%20%E7%9A%84%E4%BD%BF%E7%94%A8.md)
 
 ### ViewModel
 
-- [我们为什么需要 ViewModel]()
+- [我们为什么需要 ViewModel](https://github.com/shadowwingz/AndroidLife/blob/master/jetpack/ViewModel/%E6%88%91%E4%BB%AC%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81ViewModel.md)
 
 ## 四大组件
 ### Activity
