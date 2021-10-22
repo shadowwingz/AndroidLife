@@ -4,6 +4,11 @@ AndroidLife
 <br>
 <br>
 
+## Java 核心：
+
+- 静态代理
+- 动态代理
+
 ## JetPack
 
 ### DataBinding
