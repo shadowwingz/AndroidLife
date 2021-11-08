@@ -25,7 +25,7 @@ repos.enqueue(object : Callback<List<Repo>?> {
 
 这里 repos 的类型就是 Call。
 
-但是有的时候我们也需要自定义返回类型。比如 Retrofit 和 RxJava 相结合的时候，可能会返回 Observable 类型。这个时候 CallAdapter 就会发挥作用，帮助我们适配这些不同的返回类型，我们在定义 Retrofit 接口的时候，返回值是什么类型，CallAdapter#adapt 方法就会返回什么类型。
+但是有的时候我们也需要自定义返回类型。比如 Retrofit 和 RxJava 相结合的时候，可能会返回 Observable 类型。这个时候 CallAdapter 就会发挥作用，帮助我们适配这些不同的返回类型，我们在定义 Retrofit 接口的时候，返回值是什么类型，CallAdapter#adapt 方法就会返回什么类型，从而我们在调用接口方法的时候，返回的就是什么类型。
 
 在 Retrofit 中，CallAdapter 是由 `CallAdapter.Factory` 的实现类生产出来的。
 
@@ -34,3 +34,51 @@ repos.enqueue(object : Callback<List<Repo>?> {
 从名字就可以看出，Converter 是用来做转换的。转换什么呢？转换服务器返回的数据类型。服务器返回的一般都是 json 字符串，我们拿到 json 字符串之后，需要把 json 字符串转换为实体类才方便后续的使用。有了 Converter，我们拿到的直接就是一个实体类对象，省去了手动转换的过程。
 
 在 Retrofit 中，Converter 是由 `Converter.Factory` 的实现类生产出来的。
+
+接下来我们开始源码解析，先从第一行代码开始：
+
+```kotlin
+val service = retrofit.create(GithubService::class.java)
+
+Retrofit # create
+
+public <T> T create(final Class<T> service) {
+    validateServiceInterface(service);
+return (T)
+    Proxy.newProxyInstance(
+        service.getClassLoader(),
+        new Class<?>[] {service},
+        new InvocationHandler() {
+            private final Platform platform = Platform.get();
+            private final Object[] emptyArgs = new Object[0];
+
+            @Override
+            public @Nullable Object invoke(Object proxy, Method method, @Nullable Object[] args)
+                throws Throwable {
+            // If the method is a method from Object then defer to normal invocation.
+            if (method.getDeclaringClass() == Object.class) {
+                return method.invoke(this, args);
+            }
+            args = args != null ? args : emptyArgs;
+            return platform.isDefaultMethod(method)
+                ? platform.invokeDefaultMethod(method, service, proxy, args)
+                : loadServiceMethod(method).invoke(args);
+            }
+        });
+}
+```
+
+这行代码的内部会使用 `Proxy.newProxyInstance` 来创建动态代理。而动态代理的核心，就是 `InvocationHandler#invoke` 中的逻辑：
+
+```java
+loadServiceMethod(method).invoke(args);
+```
+
+`loadServiceMethod` 会解析我们定义的 Retrofit 接口，即：
+
+```kotlin
+@GET("users/{user}/repos")
+fun listRepos(@Path("user") user: String): Call<List<Repo>>
+```
+
+在 Retrofit 的接口函数中，用注解 `@GET("users/{user}/repos")` 和 `@Path("user")` 描述了输入参数，用 Java 对象 `List<Repo>` 定义了返回值类型。
