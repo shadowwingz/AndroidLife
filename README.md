@@ -4,6 +4,10 @@ AndroidLife
 <br>
 <br>
 
+## Gradle Plugin 系列
+
+- [动手写一个最简单的 Gradle Plugin](https://github.com/shadowwingz/AndroidLife/blob/master/gradle%20plugin/%E5%8A%A8%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%20Gradle%20Plugin.md)
+
 ## Java 核心：
 
 - 静态代理
