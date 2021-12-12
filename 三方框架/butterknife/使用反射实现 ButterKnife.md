@@ -1,3 +1,18 @@
+# 使用反射实现 ButterKnife
+
+<!-- TOC -->
+
+- [传统写法](#%E4%BC%A0%E7%BB%9F%E5%86%99%E6%B3%95)
+- [开始改造](#%E5%BC%80%E5%A7%8B%E6%94%B9%E9%80%A0)
+    - [自定义 BindView 注解](#%E8%87%AA%E5%AE%9A%E4%B9%89-bindview-%E6%B3%A8%E8%A7%A3)
+    - [改造遇到的问题](#%E6%94%B9%E9%80%A0%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98)
+    - [解决方案](#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88)
+- [抽取出一个 Libiary](#%E6%8A%BD%E5%8F%96%E5%87%BA%E4%B8%80%E4%B8%AA-libiary)
+
+<!-- /TOC -->
+
+## 传统写法
+
 假如我们要在屏幕上写一个 TextView，我们的代码一般是这样的。
 
 ```java
@@ -22,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
 
 1 处的代码声明了一个 TextView 类型的变量 `tvShow`，2 处的代码创建了一个 TextView 对象并赋值给 `tvShow`，3 处给 `tvShow` 设置了一个文本值。
 
+## 开始改造
+
 既然我们要改造成 ButterKnife 的样式，那首先我们得把 1 处改成注解的样式：
 
 ```java
@@ -30,6 +47,8 @@ TextView tvShow;
 ```
 
 我们发现报红了。哦，对了，我们还没集成 ButterKnife 呢，啊，不对不对，我们是要自己写一个 ButterKnife！
+
+### 自定义 BindView 注解
 
 OK，那我们定义一个 BindView 注解：
 
@@ -114,12 +133,14 @@ public class MainActivity extends AppCompatActivity {
 
 可以看到，我们用 `Binding.bind(this);` 取代了 findViewById。
 
+### 改造遇到的问题
+
 但是这样的 Binding 显然不是我们想要的，它还有不少问题：
 
 1. bind 方法的形参类型是 MainActivity，而我们在实际使用中，是要在多个 Activity 中使用的，不能仅限于 MainActivity。
 2. bind 方法中只对 `tv_show` 这个控件进行了 findViewById 操作，相当于把控件 id 给写死了。
 
-解决方案：
+### 解决方案
 
 针对第一个问题，我们可以把形参改为 Activity，这样就不用受 Activity 类型的限制了。
 
@@ -151,6 +172,8 @@ public class Binding {
 ```
 
 这样一来，我们就用反射实现了 ButterKnife。但是...好像还有点问题。
+
+## 抽取出一个 Libiary
 
 我们平常在使用第三方库的时候，都是以 libiary 的形式来使用。而我们现在是直接在主线程实现的，所以我们需要把 Binding 给移到一个单独的 libiary，然后让主工程集成这个 libiary。
 
