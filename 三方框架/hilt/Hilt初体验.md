@@ -2,8 +2,9 @@
 
 - [添加 Hilt 依赖](#添加-hilt-依赖)
 - [开始使用 Hilt](#开始使用-hilt)
-- [使用 Hilt 实现字段注入](#使用-hilt-实现字段注入)
-- [Hilt 工作流程概述](#hilt-工作流程概述)
+  - [使用 Hilt 实现字段注入](#使用-hilt-实现字段注入)
+  - [Hilt 工作流程概述](#hilt-工作流程概述)
+- [使用 Hilt 注入带参的字段](#使用-hilt-注入带参的字段)
 
 <!-- /TOC -->
 
@@ -49,7 +50,7 @@ class LogApplication : Application() {
 }
 ```
 
-## 使用 Hilt 实现字段注入
+### 使用 Hilt 实现字段注入
 
 假如我们在 Fragment 中定义了一个 DateFormatter 字段：
 
@@ -92,10 +93,57 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-## Hilt 工作流程概述
+### Hilt 工作流程概述
 
 1. 应用启动，LogApplication 会被执行，程序发现 LogApplication 有 `@HiltAndroidApp` 注解，于是 Hilt 开始工作。
 2. 应用进入 MainActivity，MainActivity 中加载了 LogsFragment。而 LogsFragment 配置了 `@AndroidEntryPoint`。于是程序告知 Hilt，LogsFragment 中可能有字段进行依赖注入。
 3. Hilt 开始查找 LogsFragment 中需要被依赖注入的字段，查找方式是看哪个字段有 `@Inject` 注解，于是找到了 `dateFormatter` 字段。
 4. Hilt 发现 `dateFormatter` 字段的类型是 `DateFormatter`，于是去查找有没有可以创建 `DateFormatter` 对象的方式。查找方式是看 `DateFormatter` 这个类的构造方法有没有添加 `@Inject` 注解。
 5. Hilt 发现 `DateFormatter` 构造器有 `@Inject` 注解，于是调用构造方法创建一个 DateFormatter 对象，并赋值给 LogsFragment 的 `dateFormatter` 字段。到这里，`dateFormatter` 的依赖注入就完成了。
+
+## 使用 Hilt 注入带参的字段
+
+假如我们要对 LoggerLocalDataSource 对象进行依赖注入：
+
+```kotlin
+class LoggerLocalDataSource(private val logDao: LogDao) {
+}
+```
+
+首先，对它的构造方法添加 `@Inject` 注解：
+
+```kotlin
+@Singleton
+class LoggerLocalDataSource @Inject constructor(private val logDao: LogDao) {
+}
+```
+
+但是这里有个问题，LoggerLocalDataSource 的构造方法中需要一个 LogDao 参数。因此我们还需要告知 hilt 应该如何创建一个 LogDao 对象。
+
+```kotlin
+@InstallIn(ApplicationComponent::class)
+@Module
+object DatabaseModule {
+
+    @Provides
+    fun provideLogDao(database: AppDatabase): LogDao {
+        return database.logDao()
+    }
+}
+```
+
+这里我们定义了一个 `provideLogDao` 来告知 hilt，可以用这个方法创建一个 LogDao 对象。但是 LogDao 对象还需要 AppDatabase 对象来获取，因此我们还需要告知 hilt 应该如何创建一个 AppDatabase 对象。
+
+```kotlin
+@Provides
+@Singleton
+fun provideDatabase(@ApplicationContext appContext: Context): AppDatabase {
+    return Room.databaseBuilder(
+        appContext,
+        AppDatabase::class.java,
+        "logging.db"
+    ).build()
+}
+```
+
+到这里，LoggerLocalDataSource 的 hilt 配置就完成了，最后我们在需要依赖注入 LoggerLocalDataSource 的地方，加上 `@Inject` 注解即可。
