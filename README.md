@@ -4,18 +4,14 @@ AndroidLife
 <br>
 <br>
 
+## 卡顿掉帧分析
+- [知乎-热榜-找一个评论多的答案-点开评论上下滑动](https://www.wolai.com/cEeL1amdECiz6gBrVt8uAk)
+- [微信 - 发现-看一看-Top -上下滑动](https://www.wolai.com/9wc1oxfFGFSZQknPEaRKdC)
+- [携程-酒店-搜索酒店-上下滑动](https://www.wolai.com/cEeL1amdECiz6gBrVt8uAk)
+
 ## Gradle Plugin 系列
 
 - [动手写一个最简单的 Gradle Plugin](https://github.com/shadowwingz/AndroidLife/blob/master/gradle%20plugin/%E5%8A%A8%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%20Gradle%20Plugin.md)
-
-## Java 核心：
-
-- 静态代理
-- 动态代理
-
-## 设计模式
-
-- [代理模式](https://github.com/shadowwingz/AndroidLife/blob/49417820b7faabc903373f295aa6d2750b16fdb3/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F.md)
 
 ## JetPack
 
@@ -115,24 +111,15 @@ AndroidLife
 
 ## 三方框架
 
-### Eventbus
+### Dagger
+- [使用Dagger快速实现依赖注入](/三方框架/dagger/使用Dagger快速实现依赖注入.md)
 
-- [Eventbus 概述](https://github.com/shadowwingz/AndroidLife/blob/master/%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6/eventbus/Eventbus%20%E6%A6%82%E8%BF%B0.md)
-- [Eventbus#register 流程](https://github.com/shadowwingz/AndroidLife/blob/master/%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6/eventbus/Eventbus%23register%20%E6%B5%81%E7%A8%8B.md)
-- [Eventbus#unregister 流程](https://github.com/shadowwingz/AndroidLife/blob/master/%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6/eventbus/Eventbus%23unregister%20%E6%B5%81%E7%A8%8B.md)
-- [EventBus#post 流程](https://github.com/shadowwingz/AndroidLife/blob/master/%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6/eventbus/EventBus%23post%20%E6%B5%81%E7%A8%8B.md)
-
-### Retrofit(待完成)
-
-### Glide(待完成)
+### Hilt
+- [Hilt初体验](https://github.com/shadowwingz/AndroidLife/blob/4941782/%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6/hilt/Hilt%E5%88%9D%E4%BD%93%E9%AA%8C.md)
 
 ### Butterknife
 
 - [使用反射实现 ButterKnife](https://github.com/shadowwingz/AndroidLife/blob/master/%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6/butterknife/%E4%BD%BF%E7%94%A8%E5%8F%8D%E5%B0%84%E5%AE%9E%E7%8E%B0%20ButterKnife.md)
-
-### Rxjava(待完成)
-
-### Okhttp(待完成)
 
 ### 内存优化
 
