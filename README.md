@@ -113,6 +113,8 @@ AndroidLife
 
 ### Dagger
 - [使用Dagger快速实现依赖注入](/三方框架/dagger/使用Dagger快速实现依赖注入.md)
+- [使用Module提供对象实例](/三方框架/dagger/使用Module提供对象实例.md)
+- [使用作用域实现单例](/三方框架/dagger/使用作用域实现单例.md)
 
 ### Hilt
 - [Hilt初体验](https://github.com/shadowwingz/AndroidLife/blob/4941782/%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6/hilt/Hilt%E5%88%9D%E4%BD%93%E9%AA%8C.md)
