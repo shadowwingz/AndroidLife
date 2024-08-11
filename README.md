@@ -17,7 +17,6 @@ AndroidLife
 
 ### DataBinding
 
-- [我们为什么需要 DataBinding]()
 - [DataBinding 使用](https://github.com/shadowwingz/AndroidLife/blob/master/jetpack/databinding/DataBinding%E4%BD%BF%E7%94%A8.md)
 - [BindingMethod 的使用](https://github.com/shadowwingz/AndroidLife/blob/master/jetpack/databinding/BingingMethod%20%E7%9A%84%E4%BD%BF%E7%94%A8.md)
 
@@ -55,8 +54,6 @@ AndroidLife
 
 - [Handler 的工作流程](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/handler/Handler%20%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.md)
 - [ThreadLocal 源码解析](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/handler/ThreadLocal%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90.md)
-- [Handler 细节之 IdleHandler(待完成)]()
-- [Handler 细节之内存屏障(待完成)]()
 
 ### Binder
 
@@ -100,10 +97,6 @@ AndroidLife
 ### 通知
 
 - [通知的显示流程](https://github.com/shadowwingz/AndroidLife/blob/master/ui/%E9%80%9A%E7%9F%A5/%E9%80%9A%E7%9F%A5%E7%9A%84%E6%98%BE%E7%A4%BA%E6%B5%81%E7%A8%8B/%E9%80%9A%E7%9F%A5%E7%9A%84%E6%98%BE%E7%A4%BA%E6%B5%81%E7%A8%8B.md)
-
-### ListView
-
-- [ListView 的工作原理](待完成)
 
 ### AlertDialog
 
