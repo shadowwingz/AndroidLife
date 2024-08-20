@@ -9,6 +9,9 @@ AndroidLife
 - [微信 - 发现-看一看-Top -上下滑动](https://www.wolai.com/9wc1oxfFGFSZQknPEaRKdC)
 - [携程-酒店-搜索酒店-上下滑动](https://www.wolai.com/cEeL1amdECiz6gBrVt8uAk)
 
+### perfetto 技巧
+- [perfetto线程抢占标志及分析思路](https://www.wolai.com/p1N1vsAxtypuSsRh2AqyTx)
+
 ## Gradle Plugin 系列
 
 - [动手写一个最简单的 Gradle Plugin](https://github.com/shadowwingz/AndroidLife/blob/master/gradle%20plugin/%E5%8A%A8%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%20Gradle%20Plugin.md)
