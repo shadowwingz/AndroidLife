@@ -5,9 +5,9 @@ AndroidLife
 <br>
 
 ## 卡顿掉帧分析
+- [携程-酒店-搜索酒店-上下滑动](https://www.wolai.com/cEeL1amdECiz6gBrVt8uAk)
 - [知乎-热榜-找一个评论多的答案-点开评论上下滑动](https://www.wolai.com/g3gYiPqNbmB7FKpxb9qWt)
 - [微信 - 发现-看一看-Top -上下滑动](https://www.wolai.com/9wc1oxfFGFSZQknPEaRKdC)
-- [携程-酒店-搜索酒店-上下滑动](https://www.wolai.com/cEeL1amdECiz6gBrVt8uAk)
 
 ### perfetto 技巧
 - [perfetto线程抢占标志及分析思路](https://www.wolai.com/p1N1vsAxtypuSsRh2AqyTx)
