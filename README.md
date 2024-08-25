@@ -14,7 +14,7 @@ AndroidLife
 ### 卡顿优化
 
 - [使用 TraceView 定位卡顿](/性能优化/卡顿优化/使用%20TraceView%20定位卡顿/使用%20TraceView%20定位卡顿.md)
-- [使用 Looper#setMessageLogging 检测卡顿](/性能优化/卡顿优化/使用%20Looper#setMessageLogging%20检测卡顿/使用%20Looper#setMessageLogging%20检测卡顿.md)
+- [利用Looper检测卡顿](/性能优化/卡顿优化/利用Looper检测卡顿/利用Looper检测卡顿.md)
 
 ### 内存优化
 
