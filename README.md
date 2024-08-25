@@ -11,6 +11,21 @@ AndroidLife
 
 ### perfetto 技巧
 - [perfetto线程抢占标志及分析思路](https://www.wolai.com/p1N1vsAxtypuSsRh2AqyTx)
+### 卡顿优化
+
+- [使用 TraceView 定位卡顿](/性能优化/卡顿优化/使用%20TraceView%20定位卡顿/使用%20TraceView%20定位卡顿.md)
+- [使用 Looper#setMessageLogging 检测卡顿](/性能优化/卡顿优化/使用%20Looper#setMessageLogging%20检测卡顿/使用%20Looper#setMessageLogging%20检测卡顿.md)
+
+### 内存优化
+
+- [图片内存优化](/性能优化/内存优化/图片内存优化/图片内存优化.md)
+- [内存泄漏概述](/性能优化/内存优化/内存泄漏/内存泄漏概述/内存泄漏概述.md)
+- [ArrayList 引起的内存泄漏](/性能优化/内存优化/内存泄漏/ArrayList%20引发的内存泄漏/ArrayList%20引发的内存泄漏.md)
+- [Handler 使用不当导致内存泄漏](/性能优化/内存优化/内存泄漏/Hanlder%20使用不当导致内存泄漏/Hanlder%20使用不当导致内存泄漏.md)
+- [单例模式引起的内存泄漏](/性能优化/内存优化/内存泄漏/单例模式引起的内存泄漏/单例模式引起的内存泄漏.md)
+- [多线程引起的内存泄漏](/性能优化/内存优化/内存泄漏/多线程引起的内存泄漏/多线程引起的内存泄漏.md)
+- [使用 MAT 分析内存泄漏](/性能优化/内存优化/内存泄漏/使用MAT分析内存泄漏/使用%20MAT%20分析内存泄漏%20.md)
+- [使用 LeakCanary 分析内存泄漏](/性能优化/内存优化/内存泄漏/使用%20LeakCanary%20分析内存泄漏/使用%20LeakCanary%20分析内存泄漏.md)
 
 ## Gradle Plugin 系列
 
@@ -119,23 +134,6 @@ AndroidLife
 ### Butterknife
 
 - [使用反射实现 ButterKnife](https://github.com/shadowwingz/AndroidLife/blob/master/%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6/butterknife/%E4%BD%BF%E7%94%A8%E5%8F%8D%E5%B0%84%E5%AE%9E%E7%8E%B0%20ButterKnife.md)
-
-### 内存优化
-
-- [图片内存优化](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/%E5%9B%BE%E7%89%87%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/%E5%9B%BE%E7%89%87%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96.md)
-- [内存泄漏概述](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%A6%82%E8%BF%B0/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%A6%82%E8%BF%B0.md)
-- [ArrayList 引起的内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/ArrayList%20%E5%BC%95%E5%8F%91%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/ArrayList%20%E5%BC%95%E5%8F%91%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F.md)
-- [Handler 使用不当导致内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/Hanlder%20%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%BD%93%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/Hanlder%20%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%BD%93%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F.md)
-- [单例模式引起的内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BC%95%E8%B5%B7%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BC%95%E8%B5%B7%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F.md)
-- [多线程引起的内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BC%95%E8%B5%B7%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BC%95%E8%B5%B7%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F.md)
-- [使用 MAT 分析内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E4%BD%BF%E7%94%A8%20MAT%20%E5%88%86%E6%9E%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%20/%E4%BD%BF%E7%94%A8%20MAT%20%E5%88%86%E6%9E%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%20.md)
-- [使用 LeakCanary 分析内存泄漏](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E4%BD%BF%E7%94%A8%20LeakCanary%20%E5%88%86%E6%9E%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E4%BD%BF%E7%94%A8%20LeakCanary%20%E5%88%86%E6%9E%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F.md)
-- [缓存策略之 LruCache](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5/LruCache.md)
-
-### 卡顿优化
-
-- [使用 TraceView 定位卡顿](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96/%E4%BD%BF%E7%94%A8%20TraceView%20%E5%AE%9A%E4%BD%8D%E5%8D%A1%E9%A1%BF/%E4%BD%BF%E7%94%A8%20TraceView%20%E5%AE%9A%E4%BD%8D%E5%8D%A1%E9%A1%BF.md)
-- [使用 Looper#setMessageLogging 检测卡顿](https://github.com/shadowwingz/AndroidLife/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96/%E4%BD%BF%E7%94%A8%20Looper%23setMessageLogging%20%E6%A3%80%E6%B5%8B%E5%8D%A1%E9%A1%BF/%E4%BD%BF%E7%94%A8%20Looper%23setMessageLogging%20%E6%A3%80%E6%B5%8B%E5%8D%A1%E9%A1%BF.md)
 
 ### 工具篇
 
