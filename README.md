@@ -4,6 +4,8 @@ AndroidLife
 <br>
 <br>
 
+- [Perfetto Pin 区域高度调节工具 — 让性能分析更高效](https://www.wolai.com/tTBehPGCLqHvopuUUujX6M)
+
 ## 卡顿掉帧分析
 - [携程-酒店-搜索酒店-上下滑动](https://www.wolai.com/cEeL1amdECiz6gBrVt8uAk)
 - [知乎-热榜-找一个评论多的答案-点开评论上下滑动](https://www.wolai.com/g3gYiPqNbmB7FKpxb9qWt)
